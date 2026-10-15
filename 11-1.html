@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web前端长度单位</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+        }
+        .container { max-width: 960px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { color: #fff; font-size: 32px; margin-bottom: 8px; }
+        .header p { color: rgba(255,255,255,0.7); font-size: 15px; }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 36px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .card h2 {
+            font-size: 20px;
+            color: #2c3e50;
+            border-left: 4px solid #3498db;
+            padding-left: 12px;
+            margin-bottom: 18px;
+        }
+        .unit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .unit-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 18px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .unit-item:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .unit-item .unit-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2980b9;
+            margin-bottom: 6px;
+        }
+        .unit-item .unit-desc { font-size: 14px; color: #555; line-height: 1.6; }
+        .unit-item .unit-example {
+            margin-top: 10px;
+            font-size: 13px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: Consolas, monospace;
+            color: #e74c3c;
+        }
+        .demo-section { margin-top: 10px; }
+        .demo-box {
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #fff;
+            background: #3498db;
+            margin-bottom: 10px;
+        }
+        .demo-px { width: 300px; }
+        .demo-em { font-size: 24px; }
+        .demo-em .inner { font-size: 2em; background: #e74c3c; display: inline-block; padding: 4px 12px; border-radius: 4px; }
+        .demo-rem { font-size: 16px; }
+        .demo-rem .inner { font-size: 2rem; background: #27ae60; display: inline-block; padding: 4px 12px; border-radius: 4px; }
+        .demo-vw { width: 50vw; min-width: 200px; background: #9b59b6; }
+        .demo-vh { height: 80px; background: #e67e22; line-height: 80px; }
+        .demo-percent { width: 60%; background: #1abc9c; }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 10px 14px;
+            text-align: left;
+        }
+        .comparison-table th { background: #f5f6fa; color: #2c3e50; }
+        .comparison-table tr:nth-child(even) { background: #fafafa; }
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .tag-absolute { background: #ffeaa7; color: #6c5ce7; }
+        .tag-relative { background: #dfe6e9; color: #00b894; }
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 15px;
+        }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Web 前端长度单位</h1>
+            <p>CSS 中的绝对单位与相对单位</p>
+        </div>
+
+        <div class="card">
+            <h2>绝对长度单位</h2>
+            <div class="unit-grid">
+                <div class="unit-item">
+                    <div class="unit-name">px（像素）</div>
+                    <div class="unit-desc">最常用的绝对单位，1px 对应屏幕上的一个物理像素点（CSS 像素）。</div>
+                    <div class="unit-example">width: 300px;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">pt（点）</div>
+                    <div class="unit-desc">印刷单位，1pt = 1/72 英寸。多用于打印样式。</div>
+                    <div class="unit-example">font-size: 12pt;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">in（英寸）</div>
+                    <div class="unit-desc">1in = 2.54cm = 96px。</div>
+                    <div class="unit-example">width: 2in;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">cm（厘米）</div>
+                    <div class="unit-desc">1cm = 37.8px。适合打印排版。</div>
+                    <div class="unit-example">margin: 1cm;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">mm（毫米）</div>
+                    <div class="unit-desc">1mm = 3.78px。</div>
+                    <div class="unit-example">padding: 5mm;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">pc（派卡）</div>
+                    <div class="unit-desc">1pc = 12pt。</div>
+                    <div class="unit-example">font-size: 1pc;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>相对长度单位</h2>
+            <div class="unit-grid">
+                <div class="unit-item">
+                    <div class="unit-name">em</div>
+                    <div class="unit-desc">相对于父元素 font-size 的倍数。</div>
+                    <div class="unit-example">font-size: 2em;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">rem</div>
+                    <div class="unit-desc">相对于根元素（html）font-size 的倍数，避免嵌套影响。</div>
+                    <div class="unit-example">font-size: 1.5rem;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">vw</div>
+                    <div class="unit-desc">相对于视口宽度的百分比，1vw = 1% 视口宽度。</div>
+                    <div class="unit-example">width: 50vw;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">vh</div>
+                    <div class="unit-desc">相对于视口高度的百分比，1vh = 1% 视口高度。</div>
+                    <div class="unit-example">height: 100vh;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">vmin</div>
+                    <div class="unit-desc">取 vw 和 vmin 中较小的那个值的百分比。</div>
+                    <div class="unit-example">font-size: 4vmin;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">vmax</div>
+                    <div class="unit-desc">取 vw 和 vmax 中较大的那个值的百分比。</div>
+                    <div class="unit-example">font-size: 4vmax;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">%</div>
+                    <div class="unit-desc">相对于父元素对应属性的百分比。</div>
+                    <div class="unit-example">width: 80%;</div>
+                </div>
+                <div class="unit-item">
+                    <div class="unit-name">ch</div>
+                    <div class="unit-desc">相对于当前字体中 "0" 字符宽度的倍数。</div>
+                    <div class="unit-example">width: 40ch;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>单位对比演示</h2>
+            <div class="demo-section">
+                <div class="demo-box demo-px">width: 300px</div>
+                <div class="demo-box demo-em">font-size: 24px → <span class="inner">2em = 48px</span></div>
+                <div class="demo-box demo-rem">font-size: 16px → <span class="inner">2rem = 32px</span></div>
+                <div class="demo-box demo-vw">width: 50vw</div>
+                <div class="demo-box demo-vh">height: 80px</div>
+                <div class="demo-box demo-percent">width: 60%</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>选择建议</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>场景</th>
+                        <th>推荐单位</th>
+                        <th>原因</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>字体大小</td>
+                        <td><span class="tag tag-relative">rem</span></td>
+                        <td>不受嵌套影响，便于全局调整</td>
+                    </tr>
+                    <tr>
+                        <td>布局宽度</td>
+                        <td><span class="tag tag-relative">%</span> <span class="tag tag-relative">vw</span></td>
+                        <td>响应式适配</td>
+                    </tr>
+                    <tr>
+                        <td>边框、间距</td>
+                        <td><span class="tag tag-absolute">px</span></td>
+                        <td>精确控制，不随字体变化</td>
+                    </tr>
+                    <tr>
+                        <td>全屏遮罩</td>
+                        <td><span class="tag tag-relative">vw</span> <span class="tag tag-relative">vh</span></td>
+                        <td>始终铺满视口</td>
+                    </tr>
+                    <tr>
+                        <td>内部元素间距</td>
+                        <td><span class="tag tag-relative">em</span></td>
+                        <td>随父元素字体大小缩放</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <a href="index.html" class="back-link">← 返回首页</a>
+    </div>
+</body>
+</html>

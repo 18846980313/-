@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>李佳的《高级网页设计》课堂实践</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .header h1 {
+            color: #fff;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 16px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+            display: inline-block;
+        }
+
+        .link-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .link-list li {
+            transition: transform 0.3s ease;
+        }
+
+        .link-list li:hover {
+            transform: translateY(-5px);
+        }
+
+        .link-list a {
+            display: block;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .link-list a:hover {
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .prompt-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .prompt-box h3 {
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .prompt-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            background: #ff6b6b;
+            color: #fff;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>李佳的《高级网页设计》课堂实践</h1>
+            <p>记录每一次成长，见证每一份努力</p>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">课堂练习作品</h2>
+            <ul class="link-list">
+                <li><a href="./1.html">练习 1</a></li>
+                <li><a href="./2-1.html">练习 2-1</a></li>
+                <li><a href="./2-2.html">练习 2-2</a></li>
+                <li><a href="./3-1.html">练习 3-1</a></li>
+                <li><a href="./3-2.html">练习 3-2</a></li>
+                <li><a href="./4-1.html">练习 4-1</a></li>
+                <li><a href="./5-1.html">练习 5-1</a></li>
+                <li><a href="./5-2.html">练习 5-2</a></li>
+                <li><a href="./6-1.html">练习 6-1</a></li>
+                <li><a href="./6-2.html">练习 6-2</a></li>
+                <li><a href="./7-1.html">练习 7-1</a></li>
+                <li><a href="./7-2.html">练习 7-2</a></li>
+                <li><a href="./8-1.html">练习 8-1</a></li>
+                <li><a href="./9-1.html">练习 9-1</a></li>
+                <li><a href="./10-1.html">练习 10-1</a></li>
+                <li><a href="./10-2.html">练习 10-2</a></li>
+                <li><a href="./10-3.html">练习 10-3</a></li>
+                <li><a href="./11-1.html">练习 11-1</a></li>
+                <li><a href="./11-2.html">练习 11-2 <span class="badge">最新</span></a></li>
+                <li><a href="./学习强国.html">学习强国</a></li>
+            </ul>
+
+            <div class="prompt-box">
+                <h3>本页面创建提示词</h3>
+                <p>"创建一个新页面，包括本目录下的所有网页的超链接，使用原生代码，不使用cdn，新页面名称为index.html，主题为李佳的《高级网页设计》课堂实践，美化页面，页面中包括本提示词。"</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p> 李佳 · 高级网页设计课程 · 课堂实践汇总</p>
+        </div>
+    </div>
+</body>
+</html>
