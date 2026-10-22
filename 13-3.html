@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>移动端下导航 · 字体图标</title>
+    <link rel="stylesheet" href="./font/iconfont.css">
+    <link rel="stylesheet" href="./cdn/fontawesome.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f2f3f5;
+            color: #333;
+        }
+        .li-phone {
+            width: 100%;
+            min-height: 100vh;
+            background: #f2f3f5;
+            padding-bottom: 76px;
+            position: relative;
+        }
+
+        .li-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .li-header .li-title { font-size: 17px; font-weight: 600; color: #222; }
+        .li-msg {
+            position: relative;
+            font-size: 22px;
+            color: #333;
+            line-height: 1;
+        }
+        .li-msg .li-badge {
+            position: absolute;
+            top: -3px;
+            right: -5px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #ff4d4f;
+            border: 2px solid #fff;
+        }
+
+        .li-banner {
+            margin: 14px;
+            border-radius: 14px;
+            padding: 22px 18px;
+            background: linear-gradient(135deg, #0f9b8e 0%, #1a5f7a 100%);
+            color: #fff;
+        }
+        .li-banner h1 { font-size: 20px; margin-bottom: 6px; }
+        .li-banner p { font-size: 13px; opacity: 0.85; line-height: 1.7; }
+
+        .li-section { margin: 0 14px 14px; }
+        .li-section h2 {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 3px solid #0f9b8e;
+        }
+        .li-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 14px 16px;
+        }
+        .li-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 0;
+            border-bottom: 1px solid #f2f2f2;
+            font-size: 14px;
+            color: #444;
+        }
+        .li-item:last-child { border-bottom: none; }
+        .li-item .li-ic {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: #eef7f5;
+            color: #0f9b8e;
+            flex-shrink: 0;
+        }
+        .li-item .li-txt { flex: 1; }
+        .li-item .li-tag {
+            font-size: 11px;
+            color: #999;
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 2px 8px;
+        }
+
+        .li-tip {
+            margin: 0 14px 14px;
+            font-size: 12px;
+            color: #999;
+            line-height: 1.8;
+        }
+
+        .li-tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            background: #fff;
+            border-top: 1px solid #ececec;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 100;
+        }
+        .li-tab-item {
+            flex: 0 1 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 9px 18px 10px;
+            color: #9a9a9a;
+            font-size: 11px;
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+        .li-tab-item .li-tab-icon { font-size: 22px; line-height: 1; }
+        .li-tab-item.active { color: #0f9b8e; }
+
+        .li-tab-item.li-tab-add { position: relative; }
+        .li-tab-add .li-tab-icon {
+            width: 50px;
+            height: 50px;
+            margin-top: -26px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0f9b8e 0%, #1a5f7a 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 16px rgba(15, 155, 142, 0.4);
+        }
+        .li-tab-add { color: #9a9a9a; }
+
+        .li-back-link {
+            display: block;
+            text-align: center;
+            margin: 6px 0 0;
+            color: #0f9b8e;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .li-back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="li-phone">
+        <div class="li-header">
+            <span class="li-title">移动端导航</span>
+            <span class="li-msg"><i class="fa-regular fa-message"></i><span class="li-badge"></span></span>
+        </div>
+
+        <div class="li-banner">
+            <h1>字体图标下导航</h1>
+            <p>使用 iconfont 字体图标实现，底部导航固定在屏幕底部，5 个项目通过 flex 自适应平分宽度，中间「添加」为凸起按钮，右上角消息图标带红点。</p>
+        </div>
+
+        <div class="li-section">
+            <h2>导航项目</h2>
+            <div class="li-card">
+                <div class="li-item">
+                    <span class="li-ic"><i class="iconfont icon-shouye"></i></span>
+                    <span class="li-txt">首页</span>
+                    <span class="li-tag">icon-shouye</span>
+                </div>
+                <div class="li-item">
+                    <span class="li-ic"><i class="iconfont icon-guanzhu"></i></span>
+                    <span class="li-txt">关注</span>
+                    <span class="li-tag">icon-guanzhu</span>
+                </div>
+                <div class="li-item">
+                    <span class="li-ic"><i class="iconfont icon-tianjia"></i></span>
+                    <span class="li-txt">添加</span>
+                    <span class="li-tag">icon-tianjia</span>
+                </div>
+                <div class="li-item">
+                    <span class="li-ic"><i class="iconfont icon-bilibili"></i></span>
+                    <span class="li-txt">会员购</span>
+                    <span class="li-tag">icon-bilibili</span>
+                </div>
+                <div class="li-item">
+                    <span class="li-ic"><i class="iconfont icon-wode"></i></span>
+                    <span class="li-txt">我的</span>
+                    <span class="li-tag">icon-wode</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="li-tip">
+            说明：导航图标全部来自 <code>font/iconfont.css</code> 字体图标；「会员购」采用 iconfont 中的 bilibili 图标；右上角消息图标因 iconfont 无对应图标，使用 Font Awesome 的 <code>fa-regular fa-message</code>，红点由 CSS 伪元素式圆点实现。
+        </p>
+
+        <a href="index.html" class="li-back-link">← 返回首页</a>
+    </div>
+
+    <nav class="li-tabbar">
+        <a class="li-tab-item active" href="javascript:void(0)">
+            <i class="iconfont icon-shouye li-tab-icon"></i>
+            <span>首页</span>
+        </a>
+        <a class="li-tab-item" href="javascript:void(0)">
+            <i class="iconfont icon-guanzhu li-tab-icon"></i>
+            <span>关注</span>
+        </a>
+        <a class="li-tab-item li-tab-add" href="javascript:void(0)">
+            <i class="iconfont icon-tianjia li-tab-icon"></i>
+            <span>添加</span>
+        </a>
+        <a class="li-tab-item" href="javascript:void(0)">
+            <i class="iconfont icon-bilibili li-tab-icon"></i>
+            <span>会员购</span>
+        </a>
+        <a class="li-tab-item" href="javascript:void(0)">
+            <i class="iconfont icon-wode li-tab-icon"></i>
+            <span>我的</span>
+        </a>
+    </nav>
+</body>
+</html>

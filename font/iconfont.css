@@ -1,0 +1,95 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 5244702 */
+  src: url('iconfont.woff2?t=1792389600267') format('woff2'),
+       url('iconfont.woff?t=1792389600267') format('woff'),
+       url('iconfont.ttf?t=1792389600267') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-guanzhu:before {
+  content: "\e600";
+}
+
+.icon-denglu-copy:before {
+  content: "\e63a";
+}
+
+.icon-pingguo:before {
+  content: "\e610";
+}
+
+.icon-sousuoxiao:before {
+  content: "\e8d6";
+}
+
+.icon-wode:before {
+  content: "\e68e";
+}
+
+.icon-tianjia:before {
+  content: "\e607";
+}
+
+.icon-daohangdizhi:before {
+  content: "\e65e";
+}
+
+.icon-dianzan_kuai:before {
+  content: "\ec8c";
+}
+
+.icon-gengduo:before {
+  content: "\e634";
+}
+
+.icon-fanhui:before {
+  content: "\e61f";
+}
+
+.icon-sharpicons_ice-cream:before {
+  content: "\e7f6";
+}
+
+.icon-sharpicons_meat:before {
+  content: "\e7f7";
+}
+
+.icon-sharpicons_margarita:before {
+  content: "\e7f8";
+}
+
+.icon-sharpicons_fried-potatoes:before {
+  content: "\e7fe";
+}
+
+.icon-sharpicons_cherries:before {
+  content: "\e7fc";
+}
+
+.icon-bilibili:before {
+  content: "\e604";
+}
+
+.icon-weixin:before {
+  content: "\e608";
+}
+
+.icon-shoucang:before {
+  content: "\e629";
+}
+
+.icon-shanchu:before {
+  content: "\e605";
+}
+
+.icon-shouye:before {
+  content: "\e77e";
+}
+

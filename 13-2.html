@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucide SVG 图标</title>
+    <script src="./cdn/lucide.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: linear-gradient(135deg, #0f9b8e 0%, #1a5f7a 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+        }
+        .li-container { max-width: 960px; margin: 0 auto; }
+        .li-header { text-align: center; margin-bottom: 40px; }
+        .li-header h1 { color: #fff; font-size: 32px; margin-bottom: 8px; }
+        .li-header p { color: rgba(255,255,255,0.78); font-size: 15px; }
+        .li-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 26px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .li-card h2 {
+            font-size: 20px;
+            color: #2c3e50;
+            border-left: 4px solid #0f9b8e;
+            padding-left: 12px;
+            margin-bottom: 8px;
+        }
+        .li-card .li-desc { font-size: 14px; color: #777; margin-bottom: 22px; }
+        .li-icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 18px;
+        }
+        .li-icon-item {
+            background: linear-gradient(160deg, #ffffff 0%, #e8f6f3 100%);
+            border: 1px solid #d3e8e3;
+            border-radius: 12px;
+            padding: 18px 10px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .li-icon-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.16);
+        }
+        .li-icon-item .li-lucide {
+            width: 30px;
+            height: 30px;
+            color: #0f9b8e;
+            display: inline-block;
+            vertical-align: middle;
+            margin-bottom: 10px;
+        }
+        .li-icon-item .li-name { font-size: 12px; color: #666; display: block; }
+        .li-sizes { display: flex; align-items: flex-end; gap: 26px; flex-wrap: wrap; }
+        .li-sizes .li-lucide { color: #e74c3c; }
+        .li-sizes small { display: block; color: #999; margin-top: 6px; text-align: center; }
+        .li-btn-row { display: flex; flex-wrap: wrap; gap: 16px; }
+        .li-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 22px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .li-btn .li-lucide { width: 16px; height: 16px; }
+        .li-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(0,0,0,0.22); }
+        .li-btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .li-btn-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .li-btn-danger { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); }
+        .li-btn-dark { background: linear-gradient(135deg, #232526 0%, #414345 100%); }
+        .li-demo-box {
+            background: #f8f9fb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .li-demo-box .li-note {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.9;
+        }
+        .li-demo-box code {
+            background: #eef1f6;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-family: Consolas, monospace;
+            color: #c0392b;
+            font-size: 13px;
+        }
+        .li-back-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        .li-back-link:hover { opacity: 1; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="li-container">
+        <div class="li-header">
+            <h1>Lucide SVG 图标</h1>
+            <p>使用内联 SVG 方式渲染矢量图标，通过 <code>data-lucide</code> 属性调用</p>
+        </div>
+
+        <div class="li-card">
+            <h2>原理说明</h2>
+            <p class="li-desc">Lucide 提供 UMD 版本 JS 文件，页面加载后调用 <code>lucide.createIcons()</code>，它会把所有带 <code>data-lucide</code> 属性的元素替换为对应的内联 SVG 图标。</p>
+            <div class="li-demo-box">
+                <p class="li-note">
+                    1. 下载 <code>lucide.min.js</code> 到本地 <code>cdn</code> 目录；<br>
+                    2. 页面通过 <code>&lt;script src="./cdn/lucide.min.js"&gt;&lt;/script&gt;</code> 引入脚本；<br>
+                    3. 使用 <code>&lt;i data-lucide="xxx"&gt;&lt;/i&gt;</code>，脚本运行后自动替换为 SVG。
+                </p>
+            </div>
+        </div>
+
+        <div class="li-card">
+            <h2>常用图标展示</h2>
+            <p class="li-desc">以下为部分常用图标，悬停有上浮效果。</p>
+            <div class="li-icon-grid">
+                <div class="li-icon-item"><i data-lucide="home" class="li-lucide"></i><span class="li-name">home</span></div>
+                <div class="li-icon-item"><i data-lucide="user" class="li-lucide"></i><span class="li-name">user</span></div>
+                <div class="li-icon-item"><i data-lucide="heart" class="li-lucide"></i><span class="li-name">heart</span></div>
+                <div class="li-icon-item"><i data-lucide="star" class="li-lucide"></i><span class="li-name">star</span></div>
+                <div class="li-icon-item"><i data-lucide="search" class="li-lucide"></i><span class="li-name">search</span></div>
+                <div class="li-icon-item"><i data-lucide="settings" class="li-lucide"></i><span class="li-name">settings</span></div>
+                <div class="li-icon-item"><i data-lucide="mail" class="li-lucide"></i><span class="li-name">mail</span></div>
+                <div class="li-icon-item"><i data-lucide="cloud" class="li-lucide"></i><span class="li-name">cloud</span></div>
+                <div class="li-icon-item"><i data-lucide="image" class="li-lucide"></i><span class="li-name">image</span></div>
+                <div class="li-icon-item"><i data-lucide="shopping-cart" class="li-lucide"></i><span class="li-name">shopping-cart</span></div>
+                <div class="li-icon-item"><i data-lucide="music" class="li-lucide"></i><span class="li-name">music</span></div>
+                <div class="li-icon-item"><i data-lucide="camera" class="li-lucide"></i><span class="li-name">camera</span></div>
+            </div>
+        </div>
+
+        <div class="li-card">
+            <h2>尺寸控制</h2>
+            <p class="li-desc">SVG 图标通过 <code>width / height</code> 或 <code>size</code> 属性控制大小，默认 24×24。</p>
+            <div class="li-sizes">
+                <i data-lucide="heart" style="width:16px;height:16px"></i><small>16px</small>
+                <i data-lucide="heart" style="width:28px;height:28px"></i><small>28px</small>
+                <i data-lucide="heart" style="width:42px;height:42px"></i><small>42px</small>
+                <i data-lucide="heart" style="width:56px;height:56px"></i><small>56px</small>
+                <i data-lucide="heart" style="width:72px;height:72px"></i><small>72px</small>
+                <i data-lucide="heart" style="width:88px;height:88px"></i><small>88px</small>
+            </div>
+        </div>
+
+        <div class="li-card">
+            <h2>按钮与颜色应用</h2>
+            <p class="li-desc">SVG 图标继承 <code>currentColor</code>，可与按钮组合并随文字颜色变化。</p>
+            <div class="li-btn-row">
+                <button class="li-btn li-btn-primary"><i data-lucide="download"></i> 下载</button>
+                <button class="li-btn li-btn-success"><i data-lucide="check"></i> 确认</button>
+                <button class="li-btn li-btn-danger"><i data-lucide="trash-2"></i> 删除</button>
+                <button class="li-btn li-btn-dark"><i data-lucide="settings"></i> 设置</button>
+            </div>
+        </div>
+
+        <a href="index.html" class="li-back-link">← 返回首页</a>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

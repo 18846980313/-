@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Awesome 字体图标</title>
+    <link rel="stylesheet" href="./cdn/fontawesome.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+        }
+        .li-container { max-width: 960px; margin: 0 auto; }
+        .li-header { text-align: center; margin-bottom: 40px; }
+        .li-header h1 { color: #fff; font-size: 32px; margin-bottom: 8px; }
+        .li-header p { color: rgba(255,255,255,0.75); font-size: 15px; }
+        .li-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 26px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .li-card h2 {
+            font-size: 20px;
+            color: #2c3e50;
+            border-left: 4px solid #2a5298;
+            padding-left: 12px;
+            margin-bottom: 8px;
+        }
+        .li-card .li-desc { font-size: 14px; color: #777; margin-bottom: 22px; }
+        .li-icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 18px;
+        }
+        .li-icon-item {
+            background: linear-gradient(160deg, #ffffff 0%, #eef2f7 100%);
+            border: 1px solid #e0e6ee;
+            border-radius: 12px;
+            padding: 18px 10px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .li-icon-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.16);
+        }
+        .li-icon-item .li-fa {
+            font-size: 30px;
+            color: #2a5298;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .li-icon-item .li-name { font-size: 12px; color: #666; }
+        .li-sizes { display: flex; align-items: flex-end; gap: 26px; flex-wrap: wrap; }
+        .li-sizes span { color: #e74c3c; }
+        .li-sizes small { display: block; color: #999; margin-top: 6px; text-align: center; }
+        .li-btn-row { display: flex; flex-wrap: wrap; gap: 16px; }
+        .li-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 22px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .li-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(0,0,0,0.22); }
+        .li-btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .li-btn-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .li-btn-danger { background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); }
+        .li-btn-dark { background: linear-gradient(135deg, #232526 0%, #414345 100%); }
+        .li-demo-box {
+            background: #f8f9fb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .li-demo-box .li-note {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.9;
+        }
+        .li-demo-box code {
+            background: #eef1f6;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-family: Consolas, monospace;
+            color: #c0392b;
+            font-size: 13px;
+        }
+        .li-back-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        .li-back-link:hover { opacity: 1; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="li-container">
+        <div class="li-header">
+            <h1>Font Awesome 字体图标</h1>
+            <p>使用 webfont 字体文件渲染矢量图标，通过 CSS 类名调用</p>
+        </div>
+
+        <div class="li-card">
+            <h2>原理说明</h2>
+            <p class="li-desc">Font Awesome 将图标做成字体（woff2），用 <code>@font-face</code> 加载字体文件，再通过 CSS 伪元素 <code>::before</code> 输出对应的 Unicode 字符，从而显示为图标。</p>
+            <div class="li-demo-box">
+                <p class="li-note">
+                    1. 下载 <code>fontawesome.min.css</code> 与 <code>fa-solid-900.woff2</code> 到本地 <code>cdn</code> 目录；<br>
+                    2. 页面通过 <code>&lt;link rel="stylesheet" href="./cdn/fontawesome.min.css"&gt;</code> 引入样式；<br>
+                    3. 使用 <code>&lt;i class="fa-solid fa-xxx"&gt;&lt;/i&gt;</code> 即可显示图标。
+                </p>
+            </div>
+        </div>
+
+        <div class="li-card">
+            <h2>常用图标展示</h2>
+            <p class="li-desc">以下为部分常用图标，悬停有上浮效果。</p>
+            <div class="li-icon-grid">
+                <div class="li-icon-item"><i class="fa-solid fa-house li-fa"></i><span class="li-name">fa-house</span></div>
+                <div class="li-icon-item"><i class="fa-solid fa-user li-fa"></i><span class="li-name">fa-user</span></div>
+                <div class="li-icon-item"><i class="fa-solid fa-heart li-fa"></i><span class="li-name">fa-heart</span></div>
+                <div class="li-icon-item"><i class="fa-solid fa-star li-fa"></i><span class="li-name">fa-star</span></div>
+                <div class="li-icon-item"><i class="fa-solid fa-magnifying-glass li-fa"></i><span class="li-name">fa-magnifying-glass</span></div>
+                <div class="li-icon-item"><i class="fa-solid fa-gear li-fa"></i><span class="li-name">fa-gear</span></div>
+                <div class="li-icon-item"><i class="fa-solid fa-envelope li-fa"></i><span class="li-name">fa-envelope</span></div>
+                <div class="li-icon-item"><i class="fa-solid fa-cloud li-fa"></i><span class="li-name">fa-cloud</span></div>
+                <div class="li-icon-item"><i class="fa-solid fa-image li-fa"></i><span class="li-name">fa-image</span></div>
+                <div class="li-icon-item"><i class="fa-solid fa-cart-shopping li-fa"></i><span class="li-name">fa-cart-shopping</span></div>
+                <div class="li-icon-item"><i class="fa-solid fa-music li-fa"></i><span class="li-name">fa-music</span></div>
+                <div class="li-icon-item"><i class="fa-solid fa-camera li-fa"></i><span class="li-name">fa-camera</span></div>
+            </div>
+        </div>
+
+        <div class="li-card">
+            <h2>尺寸控制</h2>
+            <p class="li-desc">通过内置类 <code>fa-xs / fa-sm / fa-lg / fa-2x … fa-10x</code> 或自定义 <code>font-size</code> 调整图标大小。</p>
+            <div class="li-sizes">
+                <span class="fa-solid fa-heart" style="font-size:16px"></span><small>16px</small>
+                <span class="fa-solid fa-heart" style="font-size:28px"></span><small>28px</small>
+                <span class="fa-solid fa-heart" style="font-size:42px"></span><small>42px</small>
+                <span class="fa-solid fa-heart fa-2x"></span><small>fa-2x</small>
+                <span class="fa-solid fa-heart fa-4x"></span><small>fa-4x</small>
+                <span class="fa-solid fa-heart fa-6x"></span><small>fa-6x</small>
+            </div>
+        </div>
+
+        <div class="li-card">
+            <h2>按钮与颜色应用</h2>
+            <p class="li-desc">图标可直接与按钮组合，配合颜色与渐变背景，灵活适配界面风格。</p>
+            <div class="li-btn-row">
+                <button class="li-btn li-btn-primary"><i class="fa-solid fa-download"></i> 下载</button>
+                <button class="li-btn li-btn-success"><i class="fa-solid fa-check"></i> 确认</button>
+                <button class="li-btn li-btn-danger"><i class="fa-solid fa-trash"></i> 删除</button>
+                <button class="li-btn li-btn-dark"><i class="fa-solid fa-gear"></i> 设置</button>
+            </div>
+        </div>
+
+        <a href="index.html" class="li-back-link">← 返回首页</a>
+    </div>
+</body>
+</html>

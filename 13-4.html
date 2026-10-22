@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>移动端下导航 · SVG 图标</title>
+    <script src="./cdn/lucide.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f2f3f5;
+            color: #333;
+        }
+        .li-phone {
+            width: 100%;
+            min-height: 100vh;
+            background: #f2f3f5;
+            padding-bottom: 76px;
+            position: relative;
+        }
+
+        .li-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .li-header .li-title { font-size: 17px; font-weight: 600; color: #222; }
+        .li-msg {
+            position: relative;
+            color: #333;
+            line-height: 1;
+        }
+        .li-msg-icon { width: 22px; height: 22px; display: block; }
+        .li-msg .li-badge {
+            position: absolute;
+            top: -3px;
+            right: -5px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #ff4d4f;
+            border: 2px solid #fff;
+        }
+
+        .li-banner {
+            margin: 14px;
+            border-radius: 14px;
+            padding: 22px 18px;
+            background: linear-gradient(135deg, #0f9b8e 0%, #1a5f7a 100%);
+            color: #fff;
+        }
+        .li-banner h1 { font-size: 20px; margin-bottom: 6px; }
+        .li-banner p { font-size: 13px; opacity: 0.85; line-height: 1.7; }
+
+        .li-section { margin: 0 14px 14px; }
+        .li-section h2 {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 3px solid #0f9b8e;
+        }
+        .li-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 14px 16px;
+        }
+        .li-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 0;
+            border-bottom: 1px solid #f2f2f2;
+            font-size: 14px;
+            color: #444;
+        }
+        .li-item:last-child { border-bottom: none; }
+        .li-item .li-ic {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eef7f5;
+            color: #0f9b8e;
+            flex-shrink: 0;
+        }
+        .li-item .li-ic svg { width: 18px; height: 18px; fill: currentColor; }
+        .li-item .li-txt { flex: 1; }
+        .li-item .li-tag {
+            font-size: 11px;
+            color: #999;
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 2px 8px;
+        }
+
+        .li-tip {
+            margin: 0 14px 14px;
+            font-size: 12px;
+            color: #999;
+            line-height: 1.8;
+        }
+
+        .li-tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            background: #fff;
+            border-top: 1px solid #ececec;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 100;
+        }
+        .li-tab-item {
+            flex: 0 1 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 9px 18px 10px;
+            color: #9a9a9a;
+            font-size: 11px;
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+        .li-tab-icon { width: 22px; height: 22px; fill: currentColor; display: block; }
+        .li-tab-item.active { color: #0f9b8e; }
+
+        .li-tab-item.li-tab-add { position: relative; }
+        .li-tab-add .li-tab-icon {
+            width: 24px;
+            height: 24px;
+        }
+        .li-tab-add .li-tab-circle {
+            width: 50px;
+            height: 50px;
+            margin-top: -26px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0f9b8e 0%, #1a5f7a 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(15, 155, 142, 0.4);
+        }
+
+        .li-back-link {
+            display: block;
+            text-align: center;
+            margin: 6px 0 0;
+            color: #0f9b8e;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .li-back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+        <symbol id="li-icon-shouye" viewBox="0 0 1024 1024"><path d="M510.464 81.92c2.56 0 6.656 0.512 11.264 3.072l411.136 262.144c6.144 3.584 9.216 10.24 9.216 16.896V921.6c0 11.264-9.216 20.48-20.48 20.48H102.4c-11.264 0-20.48-9.216-20.48-20.48V364.032c0-7.168 3.584-13.312 9.216-16.896l408.064-261.632c4.608-3.072 8.704-3.584 11.264-3.584m0-81.92C491.52 0 472.064 5.632 455.168 16.384L47.104 278.016C17.92 296.96 0 329.216 0 364.032V921.6c0 56.32 46.08 102.4 102.4 102.4h819.2c56.32 0 102.4-45.568 102.4-102.4V364.032c0-34.816-17.92-67.584-47.104-86.016L565.76 15.872C548.864 5.12 529.92 0 510.464 0z" ></path><path d="M696.32 758.272H327.68c-22.528 0-40.96 18.432-40.96 40.96s18.432 40.96 40.96 40.96h368.64c22.528 0 40.96-18.432 40.96-40.96s-18.432-40.96-40.96-40.96z" ></path></symbol>
+        <symbol id="li-icon-guanzhu" viewBox="0 0 1024 1024"><path d="M872.802928 755.99406 872.864326 755.99406 872.864326 755.624646Z" ></path><path d="M809.889039 214.109426c-164.252925-164.278507-431.528224-164.278507-595.778078 0-164.280554 164.250878-164.280554 431.527201 0 595.781148 164.250878 164.276461 431.526177 164.276461 595.778078 0C974.16857 645.636626 974.16857 378.360304 809.889039 214.109426M767.13326 767.130701c-140.681066 140.712789-369.617176 140.683113-510.281869 0-140.694369-140.67902-140.694369-369.585453 0-510.279822 140.664693-140.664693 369.601826-140.694369 510.281869 0C907.812279 397.516596 907.812279 626.481358 767.13326 767.130701" ></path><path d="M602.493525 338.736864c-32.254611 0-63.968917 16.619516-90.523713 47.111994-26.464745-30.491455-58.211796-47.111994-90.465384-47.111994-75.30715 0-136.547933 66.088184-136.547933 147.31823 0 38.565341 24.124444 89.705068 55.092759 117.8992 28.496008 35.20685 144.231939 140.649344 172.305321 140.649344 26.764574 0 139.576919-100.787474 170.33955-139.365094 32.132838-29.330002 56.360635-80.55978 56.360635-119.18345C739.056807 404.825049 677.801698 338.736864 602.493525 338.736864M644.593366 563.495838l-3.310396 3.013637-2.805906 3.491521c-23.599488 29.627784-93.117794 91.060949-126.208447 112.990401-33.985022-22.557762-106.159832-87.301322-128.297015-114.603131l-2.685155-3.311419-3.163039-2.892887c-21.005406-19.094894-36.640502-55.959499-36.640502-76.128865 0-50.065256 35.894512-90.792842 80.021521-90.792842 15.33629 0 32.31294 9.801227 47.829332 27.643594l42.636053 49.097208 42.663682-49.067532c15.516392-17.841344 32.522718-27.67327 47.860031-27.67327 44.128033 0 80.051197 40.726563 80.051197 90.792842C682.544723 506.314511 666.940326 543.117718 644.593366 563.495838" ></path></symbol>
+        <symbol id="li-icon-tianjia" viewBox="0 0 1024 1024"><path d="M544.256 480.256h307.2a32.256 32.256 0 0 1 0 64h-307.2v307.2a32.256 32.256 0 0 1-64 0v-307.2h-307.2a32.256 32.256 0 1 1 0-64h307.2v-307.2a32.256 32.256 0 1 1 64 0z" ></path></symbol>
+        <symbol id="li-icon-bilibili" viewBox="0 0 1024 1024"><path d="M360.896 183.968l-90.912-88.096s-14.208-17.472 9.824-37.248c24.16-19.648 25.376-10.912 33.504-5.472s135.2 130.816 135.2 130.816h-87.616z m301.952 3.264l90.912-88.096s14.208-17.472-9.824-37.248c-24.032-19.648-25.376-10.912-33.504-5.472s-135.2 130.816-135.2 130.816h87.616zM1004 350.336c-3.264-137.984-123.168-164.192-123.168-164.192s-614.336-4.96-742.496 0C10.176 222.304 20 350.336 20 350.336s1.696 274.272-0.128 413.12c13.824 138.848 120.864 160.928 120.864 160.928s42.72 0.864 73.92 0.864c3.264 8.992 5.696 52.544 54.24 52.544 48.416 0 54.24-52.544 54.24-52.544s354.88-1.696 384.352-1.696c1.696 14.816 8.992 54.976 57.536 54.24 48.416-0.864 51.712-57.536 51.712-57.536s16.384-1.696 65.664 0C997.344 898.88 1004 764.192 1004 764.192s-1.568-275.872 0-413.856z m-98.912 439.232c0 21.728-17.248 39.456-38.464 39.456H167.2c-21.248 0-38.464-17.6-38.464-39.456V326.336c0-21.728 17.248-39.456 38.464-39.456h699.424c21.248 0 38.464 17.6 38.464 39.456v463.232zM202.4 457.152l205.344-39.456 15.52 77.184-203.648 39.456z m638.976 0l-205.344-39.456-15.648 77.184 203.776 39.456z m-418.08 191.392s45.152 81.312 95.264-26.336c48.416 105.088 101.824 27.904 101.824 27.904l30.336 19.776s-56.672 91.136-131.424 22.208c-63.232 68.928-129.728-21.952-129.728-21.952l33.728-21.6z" ></path></symbol>
+        <symbol id="li-icon-wode" viewBox="0 0 1024 1024"><path d="M1020.688033 512.150544a45.163187 45.163187 0 0 1-42.152308 29.807704 44.049162 44.049162 0 0 1-37.937078-22.280506l-7.22611 0.903264V120.435166a30.108792 30.108792 0 0 0-30.108791-30.108791H120.435166a30.108792 30.108792 0 0 0-30.108791 30.108791v782.82858a30.108792 30.108792 0 0 0 30.108791 30.108791h246.591003v1.806528a46.5783 46.5783 0 0 1 9.333725-1.806528 45.163187 45.163187 0 0 1 0 90.326375 41.941547 41.941547 0 0 1-15.054396-3.010879l-0.301088 3.010879H60.217583a60.217583 60.217583 0 0 1-60.217583-60.217583V60.217583a60.217583 60.217583 0 0 1 60.217583-60.217583h903.263746a60.398236 60.398236 0 0 1 60.217583 60.217583v451.631873zM195.707145 782.82858a45.163187 45.163187 0 0 1 0-90.326375h210.761541a45.163187 45.163187 0 0 1 0 90.326375h-210.761541z m0-331.196707h240.870332a45.163187 45.163187 0 0 1 0 90.326375h-240.870332a45.163187 45.163187 0 0 1 0-90.326375z m0-240.870332h632.284622a45.163187 45.163187 0 0 1 0 90.326374h-632.284622a45.163187 45.163187 0 0 1 0-90.326374z m404.36107 580.4975a208.684034 208.684034 0 0 1-77.078506-162.286386 199.771832 199.771832 0 1 1 399.242576 0 209.376536 209.376536 0 0 1-76.777419 162.286386A282.239812 282.239812 0 0 1 993.590121 1024h-73.164364a198.055631 198.055631 0 0 0-395.629521 0H451.631873a281.908615 281.908615 0 0 1 148.436342-232.740959zM722.610997 760.548074a131.816289 131.816289 0 1 0-127.0591-131.575419A129.467804 129.467804 0 0 0 722.610997 760.548074z" ></path></symbol>
+    </svg>
+
+    <div class="li-phone">
+        <div class="li-header">
+            <span class="li-title">移动端导航</span>
+            <span class="li-msg"><i data-lucide="message-circle" class="li-msg-icon"></i><span class="li-badge"></span></span>
+        </div>
+
+        <div class="li-banner">
+            <h1>SVG 图标下导航</h1>
+            <p>使用内联 SVG（symbol + use）方式实现，底部导航固定在屏幕底部，5 个项目通过 flex 自适应平分宽度，中间「添加」为凸起按钮，右上角消息图标带红点。</p>
+        </div>
+
+        <div class="li-section">
+            <h2>导航项目</h2>
+            <div class="li-card">
+                <div class="li-item">
+                    <span class="li-ic"><svg><use href="#li-icon-shouye"></use></svg></span>
+                    <span class="li-txt">首页</span>
+                    <span class="li-tag">li-icon-shouye</span>
+                </div>
+                <div class="li-item">
+                    <span class="li-ic"><svg><use href="#li-icon-guanzhu"></use></svg></span>
+                    <span class="li-txt">关注</span>
+                    <span class="li-tag">li-icon-guanzhu</span>
+                </div>
+                <div class="li-item">
+                    <span class="li-ic"><svg><use href="#li-icon-tianjia"></use></svg></span>
+                    <span class="li-txt">添加</span>
+                    <span class="li-tag">li-icon-tianjia</span>
+                </div>
+                <div class="li-item">
+                    <span class="li-ic"><svg><use href="#li-icon-bilibili"></use></svg></span>
+                    <span class="li-txt">会员购</span>
+                    <span class="li-tag">li-icon-bilibili</span>
+                </div>
+                <div class="li-item">
+                    <span class="li-ic"><svg><use href="#li-icon-wode"></use></svg></span>
+                    <span class="li-txt">我的</span>
+                    <span class="li-tag">li-icon-wode</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="li-tip">
+            说明：导航图标来自 <code>font/iconfont.js</code> 中的 SVG symbol（已提取并内联，去掉固定 fill 以支持 currentColor 变色）；右上角消息图标因 iconfont 无对应图标，使用 Lucide 的 <code>message-circle</code>（内联 SVG），红点由 CSS 圆点实现。
+        </p>
+
+        <a href="index.html" class="li-back-link">← 返回首页</a>
+    </div>
+
+    <nav class="li-tabbar">
+        <a class="li-tab-item active" href="javascript:void(0)">
+            <svg class="li-tab-icon"><use href="#li-icon-shouye"></use></svg>
+            <span>首页</span>
+        </a>
+        <a class="li-tab-item" href="javascript:void(0)">
+            <svg class="li-tab-icon"><use href="#li-icon-guanzhu"></use></svg>
+            <span>关注</span>
+        </a>
+        <a class="li-tab-item li-tab-add" href="javascript:void(0)">
+            <span class="li-tab-circle"><svg class="li-tab-icon"><use href="#li-icon-tianjia"></use></svg></span>
+            <span>添加</span>
+        </a>
+        <a class="li-tab-item" href="javascript:void(0)">
+            <svg class="li-tab-icon"><use href="#li-icon-bilibili"></use></svg>
+            <span>会员购</span>
+        </a>
+        <a class="li-tab-item" href="javascript:void(0)">
+            <svg class="li-tab-icon"><use href="#li-icon-wode"></use></svg>
+            <span>我的</span>
+        </a>
+    </nav>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
