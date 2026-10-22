@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14-1 JavaScript 输出与弹窗</title>
+    <style>
+        body{
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            margin: 0;
+            background: #f5f6fa;
+        }
+        .li-container{
+            max-width: 640px;
+            margin: 40px auto;
+            padding: 24px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        }
+        .li-btn{
+            padding: 10px 20px;
+            font-family: inherit;
+            font-size: 16px;
+            background: #409eff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .li-btn:hover{
+            background: #66b1ff;
+        }
+        .li-result{
+            margin-top: 16px;
+            padding: 12px;
+            background: #f0f9ff;
+            border-left: 4px solid #409eff;
+        }
+    </style>
+</head>
+<body>
+    <div class="li-container">
+        <h2>李佳的JavaScript</h2>
+        <p>页面内容立即显示。点击按钮后再触发 alert / prompt / confirm 弹窗，体验三种交互。</p>
+        <button class="li-btn" id="liBtn">开始弹窗测试</button>
+        <div class="li-result" id="liResult">结果将显示在这里</div>
+    </div>
+    <script>
+        // document.write 在页面加载过程中执行，直接把内容追加到当前位置
+        document.write("hello world,李佳");
+        console.log("hello world,lijia");
+
+        // 弹窗由按钮点击触发，不再阻塞页面首次渲染
+        function liTest(){
+            alert("hello world");
+
+            var liName = prompt("请输入您的姓名");
+            console.log(liName);
+            var liAge = prompt("请输入您的年龄");
+            console.log(liAge);
+
+            var liIsConfirm = confirm("您确定要提交吗？");
+            console.log(liIsConfirm);
+
+            if(liIsConfirm){
+                document.getElementById("liResult").innerHTML = "提交成功，姓名：" + liName + "，年龄：" + liAge;
+            }else{
+                document.getElementById("liResult").innerHTML = "提交失败";
+            }
+        }
+        document.getElementById("liBtn").onclick = liTest;
+    </script>
+</body>
+</html>
