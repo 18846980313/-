@@ -35,4 +35,4 @@ Append each prompt to `li_prompt.md` with: timestamp, model name, and full promp
 3. Before push: inspect status, diff, and recent commits.
 4. Push only when the user explicitly requests it. Remotes:
    - `origin` — Gitee, `https://gitee.com/Better-Lijia/lj.git` — user says "推送 / 推gitee / 推送到 Gitee"
-   - `github` — GitHub, `git@github.com:18846980313/-.git` — user says "提交到github / 推github" (SSH public key already configured)
+   - `github` — GitHub, `ssh://git@ssh.github.com:443/18846980313/-.git` — user says "提交到github / 推github" (SSH key configured; port 22 is blocked, SSH must go over port 443 via ssh.github.com)

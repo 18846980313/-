@@ -28,7 +28,7 @@ Pure static HTML/CSS site — no build tooling, package manager, framework, or t
 ## Git remotes
 
 - `origin` — Gitee: `https://gitee.com/Better-Lijia/lj.git` — push when the user says 推送/推gitee.
-- `github` — GitHub: `git@github.com:18846980313/-.git` — push when the user says 提交到github/推github. SSH public key is configured.
+- `github` — GitHub: `ssh://git@ssh.github.com:443/18846980313/-.git` — push when the user says 提交到github/推github. SSH key is configured; port 22 is blocked on this machine, so SSH goes over port 443 (ssh.github.com).
 - Commit and push only when the user explicitly requests it.
 
 ## Prompt logging
