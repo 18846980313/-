@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-10-26，大模型：GLM-5.3，功能：演示JavaScript程序结构（条件与循环） -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15-2 JavaScript 程序结构（循环与条件）</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #f5f6fa;
+            padding: 40px 20px;
+            color: #333;
+        }
+        .lj_container{
+            max-width: 960px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        }
+        .lj_container h2{
+            margin-bottom: 8px;
+        }
+        .lj_subtitle{
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .lj_section{
+            border: 1px solid #ebebef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .lj_section h3{
+            color: #444;
+            font-size: 17px;
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .lj_code_block{
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+            background: #282c34;
+            color: #abb2bf;
+            padding: 14px 16px;
+            border-radius: 8px;
+            white-space: pre;
+            overflow-x: auto;
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+        .lj_result{
+            background: #f4f6fa;
+            border-left: 4px solid #409eff;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 14px;
+            line-height: 1.9;
+            color: #555;
+        }
+        .lj_grade{
+            font-weight: bold;
+            color: #409eff;
+        }
+        .lj_tag{
+            display: inline-block;
+            background: #eef6ff;
+            color: #409eff;
+            font-size: 12px;
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin-right: 6px;
+        }
+        .lj_form{
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .lj_input{
+            border: 1px solid #d0d5dd;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            width: 160px;
+            font-family: inherit;
+        }
+        .lj_input:focus{
+            outline: none;
+            border-color: #667eea;
+        }
+        .lj_btn{
+            background: #667eea;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .lj_btn:hover{
+            background: #5a76e8;
+        }
+        .lj_table{
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .lj_row{
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .lj_cell{
+            font-size: 13px;
+            background: #eef2ff;
+            color: #4a5568;
+            border: 1px solid #dde3f8;
+            border-radius: 6px;
+            padding: 3px 10px;
+        }
+        .lj_note{
+            background: #fffbe6;
+            border-left: 4px solid #faad14;
+            border-radius: 6px;
+            padding: 14px 16px;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <h2>李佳的JavaScript —— 程序结构（循环与条件）</h2>
+        <p class="lj_subtitle">程序三大结构：顺序、分支（条件）、循环。本页重点演示条件结构与循环结构。</p>
+
+        <div class="lj_section">
+            <h3>一、条件结构（if...else if...else）</h3>
+<pre class="lj_code_block">function lj_getGrade(lj_score){
+    if(lj_score >= 90){
+        return "优秀";
+    }else if(lj_score >= 80){
+        return "良好";
+    }else if(lj_score >= 60){
+        return "及格";
+    }else{
+        return "不及格";
+    }
+}</pre>
+            <div class="lj_result" id="lj_score_demo"></div>
+            <div class="lj_form">
+                <input class="lj_input" id="lj_score_input" type="number" min="0" max="100" placeholder="输入 0~100 的分数">
+                <button class="lj_btn" id="lj_score_btn">判断等级</button>
+            </div>
+            <div class="lj_result" id="lj_score_result" style="margin-top:10px;">输入分数后点击按钮，用条件结构判断成绩等级。</div>
+        </div>
+
+        <div class="lj_section">
+            <h3>二、循环结构（for）</h3>
+<pre class="lj_code_block">// for 嵌套循环：九九乘法表
+for(var lj_i = 1; lj_i <= 9; lj_i++){        // 外层控制行
+    for(var lj_j = 1; lj_j <= lj_i; lj_j++){ // 内层控制列
+        // 输出 lj_j × lj_i = 乘积
+    }
+}</pre>
+            <span class="lj_tag">for 嵌套循环</span>九九乘法表：
+            <div class="lj_result" style="margin-top:8px;">
+                <div class="lj_table" id="lj_multi"></div>
+            </div>
+        </div>
+
+        <div class="lj_section">
+            <h3>三、循环结构（while 与 do-while）</h3>
+<pre class="lj_code_block">// while：先判断后执行 —— 1 累加到 100
+var lj_total = 0;
+var lj_k = 1;
+while(lj_k <= 100){
+    lj_total += lj_k;
+    lj_k++;
+}
+
+// do-while：先执行后判断，至少执行一次 —— 5 到 1 倒计时
+var lj_count = 5;
+do{
+    lj_count--;   // 输出倒计时
+}while(lj_count > 0);</pre>
+            <div class="lj_result" id="lj_while_result"></div>
+        </div>
+
+        <div class="lj_note">
+            小结：while 是"先判断后执行"，条件不满足时一次都不执行；do-while 是"先执行后判断"，至少执行一次。循环与条件可以嵌套使用，例如 15-1 的"逢7过"就是 for 循环内嵌套条件判断的组合。
+        </div>
+    </div>
+    <script>
+        // ===== 条件结构演示 =====
+        function lj_getGrade(lj_score){
+            if(lj_score >= 90){
+                return "优秀";
+            }else if(lj_score >= 80){
+                return "良好";
+            }else if(lj_score >= 60){
+                return "及格";
+            }else{
+                return "不及格";
+            }
+        }
+
+        // 示例分数的判定结果
+        var lj_demoScores = [95, 82, 65, 40];
+        var lj_scoreDemoHtml = "示例判定：";
+        for(var lj_s = 0; lj_s < lj_demoScores.length; lj_s++){
+            lj_scoreDemoHtml += lj_demoScores[lj_s] + " 分 → <span class='lj_grade'>"
+                + lj_getGrade(lj_demoScores[lj_s]) + "</span>　";
+        }
+        document.getElementById("lj_score_demo").innerHTML = lj_scoreDemoHtml;
+
+        // 交互：输入分数判断等级
+        document.getElementById("lj_score_btn").onclick = function(){
+            var lj_val = document.getElementById("lj_score_input").value;
+            var lj_num = Number(lj_val);
+            if(lj_val === "" || isNaN(lj_num) || lj_num < 0 || lj_num > 100){
+                document.getElementById("lj_score_result").innerHTML = "请输入 0~100 之间的有效分数！";
+                return;
+            }
+            document.getElementById("lj_score_result").innerHTML =
+                lj_num + " 分的等级是：<span class='lj_grade'>" + lj_getGrade(lj_num) + "</span>";
+        };
+
+        // ===== for 嵌套循环：九九乘法表 =====
+        var lj_multiHtml = "";
+        for(var lj_i = 1; lj_i <= 9; lj_i++){
+            var lj_rowHtml = '<div class="lj_row">';
+            for(var lj_j = 1; lj_j <= lj_i; lj_j++){
+                lj_rowHtml += '<span class="lj_cell">' + lj_j + "×" + lj_i + "=" + (lj_i * lj_j) + '</span>';
+            }
+            lj_multiHtml += lj_rowHtml + '</div>';
+        }
+        document.getElementById("lj_multi").innerHTML = lj_multiHtml;
+
+        // ===== while：1 累加到 100 =====
+        var lj_total = 0;
+        var lj_k = 1;
+        while(lj_k <= 100){
+            lj_total += lj_k;
+            lj_k++;
+        }
+
+        // ===== do-while：5 到 1 倒计时 =====
+        var lj_count = 5;
+        var lj_countHtml = "";
+        do{
+            lj_countHtml += lj_count + " ";
+            lj_count--;
+        }while(lj_count > 0);
+
+        document.getElementById("lj_while_result").innerHTML =
+            "<span class='lj_tag'>while</span>1 + 2 + … + 100 = <b>" + lj_total + "</b><br>"
+            + "<span class='lj_tag'>do-while</span>倒计时输出：" + lj_countHtml + "（即使条件一开始不满足，也会先执行一次）";
+
+        console.log("while 求和结果：" + lj_total);
+        console.log("do-while 倒计时：" + lj_countHtml);
+    </script>
+</body>
+</html>
