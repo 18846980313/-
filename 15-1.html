@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，日期：2026-10-26，功能：逢7过游戏（100个盒子，满足数7规则显示空盒） -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15-1 逢7过（100个盒子）</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #f5f6fa;
+            padding: 40px 20px;
+        }
+        .lj_container{
+            max-width: 960px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        }
+        .lj_container h2{
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .lj_subtitle{
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .lj_stats{
+            background: #e8f4ff;
+            border-left: 4px solid #409eff;
+            border-radius: 6px;
+            padding: 12px 16px;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        .lj_grid{
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+        }
+        .lj_box{
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #444;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            transition: transform .25s ease, border-color .25s ease;
+        }
+        .lj_box:hover{
+            transform: scale(1.12);
+            border-color: #667eea;
+        }
+        .lj_empty{
+            background: #fff1f0;
+            border: 1px dashed #ffa39e;
+        }
+        @media (max-width: 720px){
+            .lj_grid{
+                grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+            }
+            .lj_box{
+                height: 44px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <h2>李佳的JavaScript —— 逢7过（100 个盒子）</h2>
+        <p class="lj_subtitle">数 7 规则：能被 7 整除，或个位、十位含 7 的数都要"过"——显示空盒；其余正常显示数字。</p>
+        <div class="lj_stats" id="lj_stats"></div>
+        <div class="lj_grid" id="lj_grid"></div>
+    </div>
+    <script>
+        // 生成 100 个盒子
+        var lj_html = "";
+        var lj_emptyCount = 0;
+        for(var lj_i = 1; lj_i <= 100; lj_i++){
+            // 数7规则：被7整除、个位是7、十位是7，满足任一条件即"过"
+            var lj_isSeven = (lj_i % 7 === 0) || (lj_i % 10 === 7) || (parseInt(lj_i / 10) === 7);
+            if(lj_isSeven){
+                lj_emptyCount++;
+                lj_html += '<div class="lj_box lj_empty"></div>';    // 满足规则：空盒
+            }else{
+                lj_html += '<div class="lj_box">' + lj_i + '</div>'; // 不满足：显示数字
+            }
+        }
+        document.getElementById("lj_grid").innerHTML = lj_html;
+        document.getElementById("lj_stats").innerHTML =
+            '共 100 个盒子：' + lj_emptyCount + ' 个逢 7 显示为空盒（红色虚线），'
+            + (100 - lj_emptyCount) + ' 个正常显示数字。<br>'
+            + '判断条件（满足任一即为空盒）：number % 7 === 0（被7整除）、number % 10 === 7（个位是7）、parseInt(number / 10) === 7（十位是7）。';
+
+        console.log("逢7过共 " + lj_emptyCount + " 个数，应为空盒");
+    </script>
+</body>
+</html>

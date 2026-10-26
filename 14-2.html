@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，日期：2026-10-22，功能：演示JavaScript六种基本数据类型 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14-2 JavaScript 六种基本数据类型</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #f5f6fa;
+            padding: 40px 20px;
+        }
+        .lj_container{
+            max-width: 960px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        }
+        .lj_container h2{
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .lj_subtitle{
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .lj_grid{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        .lj_card{
+            border: 1px solid #ebebef;
+            border-top: 3px solid #667eea;
+            border-radius: 10px;
+            padding: 18px;
+            transition: transform .3s ease, box-shadow .3s ease;
+        }
+        .lj_card:hover{
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(102,126,234,.15);
+        }
+        .lj_badge{
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            background: #667eea;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .lj_card h3{
+            color: #444;
+            font-size: 17px;
+            margin-bottom: 10px;
+        }
+        .lj_card p{
+            color: #555;
+            font-size: 14px;
+            line-height: 1.9;
+        }
+        .lj_code{
+            font-family: Consolas, "Courier New", monospace;
+            background: #f4f4f5;
+            color: #c7254e;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .lj_typeof{
+            font-family: Consolas, "Courier New", monospace;
+            font-weight: bold;
+            color: #409eff;
+        }
+        .lj_note{
+            background: #fffbe6;
+            border-left: 4px solid #faad14;
+            border-radius: 6px;
+            padding: 14px 16px;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <h2>李佳的JavaScript —— 六种基本数据类型</h2>
+        <p class="lj_subtitle">五种基本类型：Number、String、Boolean、Undefined、Null，加上一种引用类型：Object</p>
+        <div class="lj_grid" id="lj_grid"></div>
+        <div class="lj_note">
+            注意：typeof null 返回 "object" 是 JavaScript 的历史遗留问题，null 本质上是基本类型；此外 ES6 新增了 Symbol（符号）、ES2020 新增了 BigInt（大整数），现代 JavaScript 的数据类型已不止六种。
+        </div>
+    </div>
+    <script>
+        // 六种数据类型的示例变量
+        var lj_num = 42;
+        var lj_str = "李佳";
+        var lj_bool = true;
+        var lj_undef;
+        var lj_null = null;
+        var lj_obj = { name: "李佳", age: 20 };
+
+        var lj_types = [
+            { name: "Number 数字型", code: "var lj_num = 42;", desc: "整数和小数，如 3.14、1e5，特殊值有 NaN、Infinity", value: lj_num },
+            { name: "String 字符串型", code: "var lj_str = \"李佳\";", desc: "引号包裹的文本，单引号或双引号均可", value: lj_str },
+            { name: "Boolean 布尔型", code: "var lj_bool = true;", desc: "只有 true 和 false 两个值，常用于条件判断", value: lj_bool },
+            { name: "Undefined 未定义型", code: "var lj_undef;", desc: "声明但未赋值的变量，默认值就是 undefined", value: lj_undef },
+            { name: "Null 空值型", code: "var lj_null = null;", desc: "表示空值，注意 typeof null 会返回 object（见下方说明）", value: lj_null },
+            { name: "Object 对象型", code: "var lj_obj = { name: \"李佳\", age: 20 };", desc: "引用类型，包括对象、数组、函数等", value: lj_obj }
+        ];
+
+        var lj_html = "";
+        for(var lj_i = 0; lj_i < lj_types.length; lj_i++){
+            var lj_item = lj_types[lj_i];
+            var lj_show = lj_item.value;
+            // 对象用 JSON.stringify 展示内容，避免显示成 [object Object]
+            if(lj_show !== null && typeof lj_show === "object"){
+                lj_show = JSON.stringify(lj_show);
+            }
+            lj_html += '<div class="lj_card">'
+                + '<span class="lj_badge">' + (lj_i + 1) + '</span>'
+                + '<h3>' + lj_item.name + '</h3>'
+                + '<p>声明：<span class="lj_code">' + lj_item.code + '</span></p>'
+                + '<p>当前值：' + lj_show + '</p>'
+                + '<p>typeof 结果：<span class="lj_typeof">' + (typeof lj_item.value) + '</span></p>'
+                + '<p>' + lj_item.desc + '</p>'
+                + '</div>';
+        }
+        document.getElementById("lj_grid").innerHTML = lj_html;
+
+        // 控制台同步输出，便于课后练习查看
+        console.log("六种数据类型 typeof 演示：");
+        console.log("Number：" + typeof lj_num);
+        console.log("String：" + typeof lj_str);
+        console.log("Boolean：" + typeof lj_bool);
+        console.log("Undefined：" + typeof lj_undef);
+        console.log("Null：" + typeof lj_null);
+        console.log("Object：" + typeof lj_obj);
+    </script>
+</body>
+</html>

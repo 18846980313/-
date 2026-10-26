@@ -14,7 +14,16 @@ Pure static HTML/CSS site — no build tooling, package manager, framework, or t
 
 ## Naming conventions
 
-- All CSS class names, id names, and JS variables must start with `li` (e.g., `li-container`, `li-header`, `liInit`).
+- All CSS class names, id names, and JS variables must start with `lj_` (e.g., `lj_container`, `lj_header`, `lj_init`).
+
+## Page header comment
+
+- Every new HTML page must include a comment near the top (first line of `<head>` or `<body>`) with author, creation date, AI model used, and feature name: `<!-- 姓名：李佳，建立时间：YYYY-MM-DD，大模型：<使用的大模型名称>，功能：页面功能名称 -->`
+
+## Technology constraints
+
+- All pages must be implemented with native HTML, CSS and JavaScript only — no third-party libraries, no CDN references.
+- Icons must use the local iconfont in the `font/` directory (e.g. link `font/iconfont.css` or use the SVG symbols from `font/`).
 
 ## Prompt logging
 
