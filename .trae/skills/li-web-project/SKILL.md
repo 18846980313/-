@@ -33,4 +33,6 @@ Append each prompt to `li_prompt.md` with: timestamp, model name, and full promp
 1. `git add` intended files only — never commit secrets.
 2. Write a concise commit message matching the repo style.
 3. Before push: inspect status, diff, and recent commits.
-4. Push to the configured remote only when the user explicitly requests it.
+4. Push only when the user explicitly requests it. Remotes:
+   - `origin` — Gitee, `https://gitee.com/Better-Lijia/lj.git` — user says "推送 / 推gitee / 推送到 Gitee"
+   - `github` — GitHub, `git@github.com:18846980313/-.git` — user says "提交到github / 推github" (SSH public key already configured)

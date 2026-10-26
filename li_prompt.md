@@ -91,3 +91,7 @@
 ## 2026-10-26 — GLM-5.3
 
 推gitee
+
+## 2026-10-26 — GLM-5.3
+
+创建技能skilll，提交到github上，commit和push整个项目到`https://github.com/18846980313/-`公钥已设置

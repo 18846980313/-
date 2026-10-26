@@ -25,6 +25,12 @@ Pure static HTML/CSS site — no build tooling, package manager, framework, or t
 - All pages must be implemented with native HTML, CSS and JavaScript only — no third-party libraries, no CDN references.
 - Icons must use the local iconfont in the `font/` directory (e.g. link `font/iconfont.css` or use the SVG symbols from `font/`).
 
+## Git remotes
+
+- `origin` — Gitee: `https://gitee.com/Better-Lijia/lj.git` — push when the user says 推送/推gitee.
+- `github` — GitHub: `git@github.com:18846980313/-.git` — push when the user says 提交到github/推github. SSH public key is configured.
+- Commit and push only when the user explicitly requests it.
+
 ## Prompt logging
 
 - Before executing any user prompt, append it to `li_prompt.md` with: timestamp, model name, and full prompt content. Never overwrite existing entries.
