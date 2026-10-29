@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-10-29，大模型：GLM-5.3，功能：三个导航标签点击切换内容的信息列表面板 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-4 导航切换内容面板</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #e3e6eb;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+        }
+        .lj_container{
+            max-width: 360px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 4px;
+            padding: 16px 16px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.06);
+        }
+
+        /* ===== 顶部导航（三标签） ===== */
+        .lj_nav{
+            display: flex;
+            list-style: none;
+            margin-bottom: 18px;
+        }
+        .lj_tab{
+            flex: 1;
+            height: 32px;
+            line-height: 30px;
+            text-align: center;
+            font-size: 15px;
+            color: #333;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 2px;
+            transition: color .2s ease, border-color .2s ease;
+            user-select: none;
+        }
+        .lj_tab:hover{
+            color: #a80a0d;
+        }
+        .lj_tab.lj_on{
+            border-color: #a80a0d;
+            color: #a80a0d;
+        }
+
+        /* ===== 内容列表 ===== */
+        .lj_list{
+            list-style: none;
+        }
+        .lj_item{
+            position: relative;
+            padding-left: 12px;
+            line-height: 32px;
+            font-size: 15px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            animation: ljFade .28s ease;
+            transition: color .2s ease;
+        }
+        .lj_item::before{
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #b8bcc4;
+            transition: background .2s ease;
+        }
+        .lj_item:hover{
+            color: #a80a0d;
+        }
+        .lj_item:hover::before{
+            background: #a80a0d;
+        }
+        @keyframes ljFade{
+            from{ opacity: 0; transform: translateY(4px); }
+            to{ opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== 底部 ===== */
+        .lj_home{
+            display: block;
+            width: 360px;
+            max-width: 100%;
+            margin: 16px auto 0;
+            text-align: center;
+            font-size: 13px;
+            color: #7a7f87;
+            text-decoration: none;
+        }
+        .lj_home:hover{
+            color: #a80a0d;
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <!-- 顶部导航：三个标签，点击切换下方列表 -->
+        <ul class="lj_nav" id="lj_nav"></ul>
+        <!-- 内容列表 -->
+        <ul class="lj_list" id="lj_list"></ul>
+    </div>
+    <a class="lj_home" href="./index.html">返回首页</a>
+
+    <script>
+        /* ===== 三组数据：与三个导航标签一一对应 ===== */
+        var lj_data = [
+            {
+                tab: "最新动态",
+                items: [
+                    "本周课程作业提交情况汇总通知",
+                    "高级网页设计课程上机安排调整",
+                    "学员作品展示专区正式上线运行",
+                    "期末项目分组名单已经公布",
+                    "新增移动端布局练习素材包下载",
+                    "实验室开放时间安排（本月）",
+                    "关于开展网页设计竞赛的通知",
+                    "教师答疑时间安排表已更新",
+                    "课程录播回放已上传至学习平台"
+                ]
+            },
+            {
+                tab: "热门推荐",
+                items: [
+                    "Flex 弹性布局十分钟快速入门",
+                    "CSS3 动画实战：轮播图的实现",
+                    "原生 JavaScript 实现选项卡切换",
+                    "移动端自适应布局的五种方案",
+                    "Git 常用命令速查手册",
+                    "图标字体的本地引用与部署方法",
+                    "表单校验常用技巧汇总整理",
+                    "页面性能优化的十个细节要点",
+                    "从零开始搭建一个静态站点"
+                ]
+            },
+            {
+                tab: "常见问题",
+                items: [
+                    "忘记密码后如何重新登录系统",
+                    "作业上传失败时要怎么处理",
+                    "为什么页面在手机上显示错位",
+                    "如何引用本地的图标字体文件",
+                    "浏览器缓存导致页面没有更新",
+                    "提交时提示文件格式不被支持",
+                    "怎样把网页推送到远程仓库",
+                    "示例代码无法运行如何排查",
+                    "课程资料在哪里可以下载"
+                ]
+            }
+        ];
+
+        var lj_current = 0;
+
+        /* ===== 渲染导航 ===== */
+        function lj_renderNav(){
+            var lj_html = "";
+            for(var lj_i = 0; lj_i < lj_data.length; lj_i++){
+                lj_html += '<li class="lj_tab' + (lj_i === lj_current ? " lj_on" : "") + '" data-lj="' + lj_i + '">'
+                         + lj_data[lj_i].tab + '</li>';
+            }
+            document.getElementById("lj_nav").innerHTML = lj_html;
+
+            var lj_tabs = document.querySelectorAll(".lj_tab");
+            for(var lj_k = 0; lj_k < lj_tabs.length; lj_k++){
+                lj_tabs[lj_k].onclick = function(){
+                    lj_switch(parseInt(this.getAttribute("data-lj"), 10));
+                };
+            }
+        }
+
+        /* ===== 渲染列表 ===== */
+        function lj_renderList(){
+            var lj_html = "";
+            var lj_items = lj_data[lj_current].items;
+            for(var lj_i = 0; lj_i < lj_items.length; lj_i++){
+                lj_html += '<li class="lj_item">' + lj_items[lj_i] + '</li>';
+            }
+            document.getElementById("lj_list").innerHTML = lj_html;
+        }
+
+        /* ===== 点击导航切换内容 ===== */
+        function lj_switch(lj_index){
+            if(lj_index === lj_current){ return; }
+            lj_current = lj_index;
+            lj_renderNav();
+            lj_renderList();
+        }
+
+        /* ===== 初始化 ===== */
+        lj_renderNav();
+        lj_renderList();
+    </script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-10-29，大模型：GLM-5.3，功能：中新热榜 / 移动热榜 新闻热榜列表页 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-3 中新热榜 · 移动热榜</title>
+    <link rel="stylesheet" href="font/iconfont.css">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #f2f3f5;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+        }
+        .lj_container{
+            max-width: 576px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 10px;
+            padding: 22px 28px 18px;
+            box-shadow: 0 6px 24px rgba(0,0,0,.06);
+        }
+
+        /* ===== 标题栏 ===== */
+        .lj_header{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 0 18px;
+        }
+        .lj_bar{
+            width: 5px;
+            height: 22px;
+            background: #e62021;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .lj_title1{
+            font-size: 22px;
+            font-weight: bold;
+            color: #222;
+            letter-spacing: 1px;
+        }
+        .lj_sep{
+            color: #d9d9d9;
+            font-size: 20px;
+            font-weight: normal;
+            margin: 0 2px;
+        }
+        .lj_title2{
+            font-size: 20px;
+            font-weight: bold;
+            color: #222;
+            letter-spacing: 1px;
+        }
+        .lj_more{
+            margin-left: auto;
+            color: #c3c6cc;
+            font-size: 20px;
+            cursor: pointer;
+            transition: color .2s ease;
+        }
+        .lj_more:hover{ color: #e62021; }
+
+        /* ===== 榜单列表 ===== */
+        .lj_list{
+            list-style: none;
+        }
+        .lj_item{
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            height: 48px;
+            cursor: pointer;
+            padding: 0 2px;
+            border-radius: 8px;
+            transition: background .2s ease;
+        }
+        .lj_item:hover{
+            background: #faf7f7;
+        }
+        .lj_rank{
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+            flex-shrink: 0;
+            background: #f4f5f7;
+            color: #b7bcc6;
+        }
+        .lj_rank1{ background: #f04b4b; color: #fff; }
+        .lj_rank2{ background: #ff7e29; color: #fff; }
+        .lj_rank3{ background: #ffb624; color: #fff; }
+        .lj_text{
+            flex: 1;
+            font-size: 15px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color .2s ease;
+        }
+        .lj_item:hover .lj_text{
+            color: #e62021;
+        }
+        .lj_like{
+            flex-shrink: 0;
+            color: #d6d9de;
+            font-size: 15px;
+            opacity: 0;
+            transform: translateX(6px);
+            transition: all .25s ease;
+        }
+        .lj_item:hover .lj_like{
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .lj_like:hover{ color: #e62021; }
+
+        /* ===== 底部 ===== */
+        .lj_footer{
+            text-align: center;
+            color: #c3c6cc;
+            font-size: 12px;
+            padding: 14px 0 2px;
+            border-top: 1px solid #f2f3f5;
+            margin-top: 8px;
+        }
+        .lj_footer .iconfont{
+            font-size: 13px;
+            margin: 0 2px;
+        }
+        .lj_home{
+            display: inline-block;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #999;
+            text-decoration: none;
+            border: 1px solid #e5e5e5;
+            border-radius: 20px;
+            padding: 5px 14px;
+            transition: all .2s ease;
+        }
+        .lj_home:hover{
+            color: #e62021;
+            border-color: #e62021;
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <!-- 标题栏：红条 + 中新热榜 | 移动热榜 + 更多图标 -->
+        <div class="lj_header">
+            <span class="lj_bar"></span>
+            <h1 class="lj_title1">中新热榜</h1>
+            <span class="lj_sep">|</span>
+            <h2 class="lj_title2">移动热榜</h2>
+            <span class="lj_more iconfont icon-gengduo" title="更多"></span>
+        </div>
+
+        <!-- 热榜列表 -->
+        <ul class="lj_list" id="lj_list"></ul>
+
+        <!-- 底部 -->
+        <div class="lj_footer">
+            数据每 5 分钟更新一次 · <span class="iconfont icon-dianzan_kuai"></span> 悬停条目可点赞
+        </div>
+        <div style="text-align:center;">
+            <a class="lj_home" href="./index.html">返回首页</a>
+        </div>
+    </div>
+
+    <script>
+        /* ===== 热榜数据 ===== */
+        var lj_data = [
+            "每月生产300枚导弹、1万架无人机？伊...",
+            "四川攀枝花通报“摊贩疑似将杀虫剂喷到水...",
+            "（乡村行·看振兴）AI助力管好白桦林 ...",
+            "72岁台胞回安徽寻亲：海峡隔不断两岸血...",
+            "中国品牌凭实力海外圈粉",
+            "中方赴法德举行防务战略磋商",
+            "中方回应法国球星姆巴佩就涉华不当言论道...",
+            "中国国际石油化工大会首次落地湛江 发布...",
+            "中国造船业保持快速发展势头 订单排至未...",
+            "强气旋“阿尔纳布”登陆 印度东部沿海超..."
+        ];
+
+        /* ===== 渲染榜单 ===== */
+        (function lj_render(){
+            var lj_html = "";
+            for(var lj_i = 0; lj_i < lj_data.length; lj_i++){
+                var lj_no = lj_i + 1;
+                var lj_cls = lj_no <= 3 ? " lj_rank" + lj_no : "";
+                lj_html += '<li class="lj_item">'
+                         + '<span class="lj_rank' + lj_cls + '">' + lj_no + '</span>'
+                         + '<span class="lj_text">' + lj_data[lj_i] + '</span>'
+                         + '<span class="lj_like iconfont icon-dianzan_kuai" title="点赞"></span>'
+                         + '</li>';
+            }
+            document.getElementById("lj_list").innerHTML = lj_html;
+        })();
+
+        /* ===== 点赞交互 ===== */
+        var lj_items = document.querySelectorAll(".lj_like");
+        for(var lj_k = 0; lj_k < lj_items.length; lj_k++){
+            lj_items[lj_k].onclick = function(lj_e){
+                lj_e.stopPropagation();
+                this.style.color = "#e62021";
+                this.style.opacity = "1";
+            };
+        }
+    </script>
+</body>
+</html>
