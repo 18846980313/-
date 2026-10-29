@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-10-29，大模型：GLM-5.3，功能：形象演示 JavaScript 数组的主要方法 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-1 JavaScript 数组的主要方法</title>
+    <link rel="stylesheet" href="font/iconfont.css">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+        }
+        .lj_container{
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 14px;
+            padding: 32px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.28);
+        }
+        .lj_head{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 2px solid #f0f0f5;
+            padding-bottom: 16px;
+            margin-bottom: 8px;
+        }
+        .lj_head h2{
+            font-size: 24px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .lj_head h2 .iconfont{
+            font-size: 26px;
+            color: #e63946;
+        }
+        .lj_back{
+            font-size: 13px;
+            color: #667eea;
+            text-decoration: none;
+            border: 1px solid #dfe3ff;
+            border-radius: 20px;
+            padding: 5px 14px;
+        }
+        .lj_back:hover{
+            background: #667eea;
+            color: #fff;
+        }
+        .lj_subtitle{
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 22px;
+            line-height: 1.8;
+        }
+        .lj_subtitle b{
+            color: #667eea;
+        }
+
+        /* ===== 果篮货架 ===== */
+        .lj_stage{
+            background: linear-gradient(180deg, #fffdf6 0%, #f6ecda 100%);
+            border: 2px dashed #e3d1ab;
+            border-radius: 14px;
+            padding: 26px 20px 34px;
+            overflow-x: auto;
+            position: relative;
+        }
+        .lj_stage_tag{
+            position: absolute;
+            top: 10px;
+            left: 16px;
+            font-size: 12px;
+            color: #b39a68;
+            letter-spacing: 1px;
+        }
+        .lj_shelf{
+            position: relative;
+            height: 132px;
+            margin-top: 14px;
+            transition: width .3s ease;
+        }
+        .lj_shelf::after{
+            content: "";
+            position: absolute;
+            left: -6px;
+            right: -6px;
+            bottom: 6px;
+            height: 8px;
+            background: linear-gradient(180deg, #d8bd90, #b9986a);
+            border-radius: 4px;
+            box-shadow: 0 3px 6px rgba(0,0,0,.15);
+        }
+        .lj_box{
+            position: absolute;
+            top: 10px;
+            width: 96px;
+            height: 96px;
+            border-radius: 14px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 8px 16px rgba(0,0,0,.22);
+            transition: left .55s cubic-bezier(.34,1.28,.5,1), transform .3s ease, opacity .3s ease;
+        }
+        .lj_box .lj_name{
+            font-size: 17px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0,0,0,.25);
+        }
+        .lj_box .lj_price{
+            font-size: 12px;
+            background: rgba(255,255,255,.26);
+            border-radius: 20px;
+            padding: 2px 10px;
+        }
+        .lj_idx, .lj_nidx{
+            position: absolute;
+            font-size: 11px;
+            font-style: normal;
+            border-radius: 20px;
+            padding: 1px 7px;
+            line-height: 16px;
+        }
+        .lj_idx{
+            top: -9px;
+            left: 4px;
+            background: #3d3550;
+            color: #fff;
+        }
+        .lj_nidx{
+            bottom: -9px;
+            right: 4px;
+            background: #fff;
+            color: #a0a0a0;
+            border: 1px solid #e4e4e4;
+        }
+        .lj_empty{
+            display: none;
+            position: absolute;
+            left: 20px;
+            top: 46px;
+            color: #b39a68;
+            font-size: 14px;
+        }
+        /* 入场 / 出场 / 状态动画 */
+        .lj_enter{
+            animation: ljDrop .5s cubic-bezier(.3,1.4,.5,1);
+        }
+        .lj_leave{
+            transform: translateY(26px) scale(.45) rotate(12deg);
+            opacity: 0;
+        }
+        .lj_bye{
+            background-image: linear-gradient(160deg, #999, #666) !important;
+        }
+        .lj_hit{
+            animation: ljPulse 1s ease;
+            box-shadow: 0 0 0 4px rgba(255,214,10,.85), 0 10px 20px rgba(0,0,0,.25);
+            z-index: 3;
+        }
+        .lj_dim{
+            opacity: .22;
+            filter: grayscale(1);
+        }
+        .lj_flip{
+            animation: ljFlip .6s ease;
+        }
+        @keyframes ljDrop{
+            0%{ transform: translateY(-70px) scale(.4); opacity: 0; }
+            70%{ transform: translateY(6px) scale(1.06); opacity: 1; }
+            100%{ transform: translateY(0) scale(1); opacity: 1; }
+        }
+        @keyframes ljPulse{
+            0%{ transform: scale(1); }
+            40%{ transform: scale(1.14) translateY(-6px); }
+            100%{ transform: scale(1); }
+        }
+        @keyframes ljFlip{
+            0%{ transform: rotateY(0deg); }
+            50%{ transform: rotateY(90deg) scale(1.05); }
+            100%{ transform: rotateY(0deg); }
+        }
+
+        /* ===== 名字数组 & 字面量 ===== */
+        .lj_names{
+            margin-top: 18px;
+            font-size: 13px;
+            color: #8a7a5c;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .lj_chip{
+            display: inline-block;
+            background: #fff;
+            border: 1px solid #e6dcc4;
+            color: #7a6a4d;
+            border-radius: 14px;
+            padding: 2px 10px;
+            font-size: 12px;
+        }
+        .lj_chip.lj_new{
+            background: #ffe9a8;
+            border-color: #f0c860;
+            color: #8a6100;
+        }
+        .lj_literal{
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12.5px;
+            background: #282c34;
+            color: #abb2bf;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.7;
+        }
+        .lj_literal .lj_k{ color: #c678dd; }
+        .lj_literal .lj_s{ color: #98c379; }
+        .lj_literal .lj_n{ color: #d19a66; }
+
+        /* ===== 工具条 ===== */
+        .lj_tools{
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 18px 0 6px;
+            font-size: 13px;
+            color: #666;
+        }
+        .lj_input{
+            border: 1px solid #d9dde8;
+            border-radius: 6px;
+            padding: 7px 10px;
+            font-size: 13px;
+            font-family: inherit;
+            width: 120px;
+        }
+        .lj_input:focus{
+            outline: none;
+            border-color: #667eea;
+        }
+        .lj_btn{
+            background: #667eea;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .lj_btn:hover{ background: #5670e6; }
+        .lj_btn.lj_gray{ background: #98a0b3; }
+        .lj_btn.lj_gray:hover{ background: #8890a5; }
+        .lj_stat{
+            margin-left: auto;
+            background: #eef1ff;
+            color: #5a6acf;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 13px;
+        }
+        .lj_stat b{ color: #e63946; }
+
+        /* ===== 方法按钮区 ===== */
+        .lj_groups{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 14px;
+            margin: 18px 0 22px;
+        }
+        .lj_group{
+            border: 1px solid #edeff5;
+            border-radius: 12px;
+            padding: 14px 16px 16px;
+            background: #fcfcff;
+        }
+        .lj_group h4{
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .lj_group h4 .lj_dot{
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+        }
+        .lj_btns{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .lj_mbtn{
+            border: 1px solid #dfe3ff;
+            background: #fff;
+            color: #4a55a8;
+            border-radius: 20px;
+            padding: 6px 13px;
+            font-size: 13px;
+            font-family: Consolas, "Courier New", monospace;
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+        .lj_mbtn:hover{
+            background: #667eea;
+            border-color: #667eea;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(102,126,234,.35);
+        }
+
+        /* ===== 说明面板 ===== */
+        .lj_panel{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+        .lj_col h4{
+            font-size: 14px;
+            color: #444;
+            margin: 14px 0 8px;
+        }
+        .lj_col h4:first-child{ margin-top: 0; }
+        .lj_hint{
+            font-size: 11px;
+            color: #aaa;
+            font-weight: normal;
+        }
+        .lj_code{
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12.5px;
+            background: #282c34;
+            color: #abb2bf;
+            border-radius: 8px;
+            padding: 14px 16px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.75;
+            min-height: 120px;
+        }
+        .lj_desc{
+            background: #f4f6fa;
+            border-left: 4px solid #667eea;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 13.5px;
+            color: #555;
+            line-height: 1.9;
+            min-height: 96px;
+        }
+        .lj_desc b{ color: #667eea; }
+        .lj_ret{
+            background: #fffbe9;
+            border-left: 4px solid #faad14;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 13.5px;
+            color: #6b5b2a;
+            line-height: 1.9;
+            min-height: 96px;
+        }
+        .lj_flag{
+            display: inline-block;
+            font-size: 11px;
+            border-radius: 10px;
+            padding: 2px 9px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .lj_yes{ background: #ffe3e3; color: #d93636; }
+        .lj_no{ background: #e3f6e8; color: #2f9e5c; }
+        .lj_log{
+            background: #1e2127;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            color: #8bd450;
+            height: 120px;
+            overflow-y: auto;
+            line-height: 1.8;
+        }
+        .lj_log div{ border-bottom: 1px dashed rgba(255,255,255,.08); padding: 1px 0; }
+        .lj_log .lj_tag_c{ color: #61afef; }
+
+        /* ===== 速查表 ===== */
+        .lj_tb_wrap{
+            margin-top: 26px;
+            overflow-x: auto;
+        }
+        .lj_tb{
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 620px;
+        }
+        .lj_tb th, .lj_tb td{
+            border: 1px solid #edeff5;
+            padding: 8px 10px;
+            text-align: left;
+        }
+        .lj_tb th{
+            background: #f3f5ff;
+            color: #555;
+        }
+        .lj_tb td:first-child{
+            font-family: Consolas, "Courier New", monospace;
+            color: #4a55a8;
+            white-space: nowrap;
+        }
+        .lj_tb tr:hover td{ background: #fafbff; }
+        .lj_note{
+            margin-top: 20px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 16px 18px;
+            font-size: 13.5px;
+            color: #666;
+            line-height: 1.9;
+        }
+        .lj_note b{ color: #667eea; }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <div class="lj_head">
+            <h2><span class="iconfont icon-sharpicons_cherries"></span>JavaScript 数组的主要方法</h2>
+            <a class="lj_back" href="./index.html">返回首页</a>
+        </div>
+        <p class="lj_subtitle">
+            把数组想象成<b>一排带编号的水果筐</b>：下标从 0 开始，每个格子里放一个水果（含名称与单价）。
+            下面的按钮就是数组的方法，点一下就能看到这排筐子会怎么变化 —— <b>会变红高亮的格子</b>就是被这次操作影响到的元素。
+        </p>
+
+        <!-- 货架 -->
+        <div class="lj_stage">
+            <span class="lj_stage_tag">var lj_basket = [ … ]　（果篮 / 数组）</span>
+            <div class="lj_shelf" id="lj_shelf"></div>
+            <div class="lj_empty" id="lj_empty">果篮空了 —— 点「重置果篮」重新装水果</div>
+            <div class="lj_names" id="lj_names_row"></div>
+        </div>
+        <div class="lj_literal" id="lj_literal"></div>
+
+        <!-- 工具条 -->
+        <div class="lj_tools">
+            <span>下标参数：</span>
+            <input class="lj_input" id="lj_idx" type="number" value="1" min="-12" max="12">
+            <span>查找关键字：</span>
+            <input class="lj_input" id="lj_key_input" type="text" value="葡萄">
+            <button class="lj_btn lj_gray" id="lj_reset_btn">重置果篮</button>
+            <span class="lj_stat">共 <b id="lj_len">0</b> 件　合计 <b id="lj_total">¥0</b></span>
+        </div>
+
+        <!-- 方法按钮 -->
+        <div class="lj_groups">
+            <div class="lj_group">
+                <h4><span class="lj_dot"></span>一、添加元素（改变原数组）</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="push">push()</button>
+                    <button class="lj_mbtn" data-lj="unshift">unshift()</button>
+                    <button class="lj_mbtn" data-lj="spliceAdd">splice() 插入</button>
+                </div>
+            </div>
+            <div class="lj_group">
+                <h4><span class="lj_dot" style="background:#e63946"></span>二、删除元素（改变原数组）</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="pop">pop()</button>
+                    <button class="lj_mbtn" data-lj="shift">shift()</button>
+                    <button class="lj_mbtn" data-lj="spliceDel">splice() 删除</button>
+                </div>
+            </div>
+            <div class="lj_group">
+                <h4><span class="lj_dot" style="background:#2f9e5c"></span>三、截取与拼接（不改原数组）</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="slice">slice()</button>
+                    <button class="lj_mbtn" data-lj="concat">concat()</button>
+                    <button class="lj_mbtn" data-lj="join">join()</button>
+                    <button class="lj_mbtn" data-lj="flat">flat()</button>
+                </div>
+            </div>
+            <div class="lj_group">
+                <h4><span class="lj_dot" style="background:#faad14"></span>四、查找元素</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="indexOf">indexOf()</button>
+                    <button class="lj_mbtn" data-lj="lastIndexOf">lastIndexOf()</button>
+                    <button class="lj_mbtn" data-lj="includes">includes()</button>
+                    <button class="lj_mbtn" data-lj="find">find()</button>
+                    <button class="lj_mbtn" data-lj="findIndex">findIndex()</button>
+                    <button class="lj_mbtn" data-lj="at">at()</button>
+                </div>
+            </div>
+            <div class="lj_group">
+                <h4><span class="lj_dot" style="background:#9b5de5"></span>五、遍历与变换</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="forEach">forEach()</button>
+                    <button class="lj_mbtn" data-lj="map">map()</button>
+                    <button class="lj_mbtn" data-lj="filter">filter()</button>
+                    <button class="lj_mbtn" data-lj="reduce">reduce()</button>
+                    <button class="lj_mbtn" data-lj="some">some()</button>
+                    <button class="lj_mbtn" data-lj="every">every()</button>
+                </div>
+            </div>
+            <div class="lj_group">
+                <h4><span class="lj_dot" style="background:#00b4d8"></span>六、排序与属性</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="sort">sort()</button>
+                    <button class="lj_mbtn" data-lj="reverse">reverse()</button>
+                    <button class="lj_mbtn" data-lj="base">length / isArray()</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 说明面板 -->
+        <div class="lj_panel">
+            <div class="lj_col">
+                <h4>本次执行的代码</h4>
+                <pre class="lj_code" id="lj_code">// 点击上方任意一个方法按钮，这里会显示对应的代码
+// 右侧会给出方法说明与运行结果</pre>
+                <h4>控制台输出 <span class="lj_hint">console.log</span></h4>
+                <div class="lj_log" id="lj_log"></div>
+            </div>
+            <div class="lj_col">
+                <h4>方法说明</h4>
+                <div class="lj_desc" id="lj_desc">数组（Array）是<b>有序的数据列表</b>，用方括号 [ ] 表示，元素之间用逗号分隔，下标从 0 开始计数。数组方法按作用可以分成六类：增、删、截拼、查、遍历变换、排序。</div>
+                <h4>运行结果</h4>
+                <div class="lj_ret" id="lj_ret">等待执行 —— 结果会显示在这里。</div>
+            </div>
+        </div>
+
+        <!-- 速查表 -->
+        <div class="lj_tb_wrap">
+            <h4 style="font-size:14px;color:#444;margin-bottom:10px;">数组方法速查表</h4>
+            <table class="lj_tb" id="lj_tb">
+                <thead>
+                    <tr><th>方法</th><th>作用</th><th>返回值</th><th>是否改变原数组</th></tr>
+                </thead>
+                <tbody id="lj_tb_body"></tbody>
+            </table>
+        </div>
+
+        <div class="lj_note">
+            小结：<b>会改变原数组</b>的方法有 push、pop、shift、unshift、splice、sort、reverse；
+            <b>不改变原数组</b>、只返回一个新结果的有 slice、concat、join、flat、indexOf、includes、find、findIndex、map、filter、reduce、some、every。
+            记忆口诀：<b>增删改排用 splice，查遍历用回调</b>；只要想"留一份原件"，就用返回新数组的方法。
+        </div>
+    </div>
+
+    <script>
+        /* ================= 数据 ================= */
+        var lj_pool = [
+            {name:"苹果",   price:8,  color:"#ff6b6b"},
+            {name:"香蕉",   price:3,  color:"#ffb703"},
+            {name:"橘子",   price:5,  color:"#ff8c42"},
+            {name:"葡萄",   price:12, color:"#9b5de5"},
+            {name:"西瓜",   price:6,  color:"#ef476f"},
+            {name:"草莓",   price:15, color:"#e63946"},
+            {name:"芒果",   price:10, color:"#f4a261"},
+            {name:"樱桃",   price:20, color:"#c9184a"},
+            {name:"菠萝",   price:9,  color:"#e9c46a"},
+            {name:"蓝莓",   price:18, color:"#5a6acf"},
+            {name:"猕猴桃", price:7,  color:"#74a892"},
+            {name:"榴莲",   price:30, color:"#b08968"}
+        ];
+        var lj_seq = 0;
+        var lj_basket = [];   // 当前数组（果篮）
+        var lj_nodes = {};    // id → 页面上的筐子元素
+        var lj_loged = false;
+
+        function lj_make(lj_p){
+            lj_seq++;
+            return {id:lj_seq, name:lj_p.name, price:lj_p.price, color:lj_p.color};
+        }
+        function lj_rand(){
+            return lj_pool[Math.floor(Math.random() * lj_pool.length)];
+        }
+        function lj_darken(lj_hex){
+            var lj_r = parseInt(lj_hex.substr(1,2),16);
+            var lj_g = parseInt(lj_hex.substr(3,2),16);
+            var lj_b = parseInt(lj_hex.substr(5,2),16);
+            var lj_k = 0.68;
+            return "rgb(" + Math.round(lj_r*lj_k) + "," + Math.round(lj_g*lj_k) + "," + Math.round(lj_b*lj_k) + ")";
+        }
+        function lj_names(){
+            var lj_a = [];
+            for(var lj_i = 0; lj_i < lj_basket.length; lj_i++){ lj_a.push(lj_basket[lj_i].name); }
+            return lj_a;
+        }
+        function lj_chips(lj_arr, lj_newFrom){
+            var lj_h = "";
+            for(var lj_i = 0; lj_i < lj_arr.length; lj_i++){
+                lj_h += '<span class="lj_chip' + (lj_newFrom && lj_i >= lj_newFrom ? " lj_new" : "") + '">' + lj_arr[lj_i] + '</span>';
+            }
+            return lj_h ? lj_h : '<span class="lj_chip">（空）</span>';
+        }
+
+        /* ================= 渲染 ================= */
+        function lj_render(){
+            var lj_shelf = document.getElementById("lj_shelf");
+            var lj_alive = {};
+            var lj_i, lj_f, lj_el;
+
+            for(lj_i = 0; lj_i < lj_basket.length; lj_i++){
+                lj_f = lj_basket[lj_i];
+                lj_alive[lj_f.id] = true;
+                lj_el = lj_nodes[lj_f.id];
+                if(!lj_el){
+                    lj_el = document.createElement("div");
+                    lj_el.className = "lj_box lj_enter";
+                    lj_el.style.backgroundImage = "linear-gradient(160deg," + lj_f.color + "," + lj_darken(lj_f.color) + ")";
+                    lj_el.innerHTML = '<i class="lj_idx"></i><b class="lj_name"></b><span class="lj_price"></span><i class="lj_nidx"></i>';
+                    lj_shelf.appendChild(lj_el);
+                    lj_nodes[lj_f.id] = lj_el;
+                    (function(lj_e){
+                        setTimeout(function(){ lj_e.classList.remove("lj_enter"); }, 520);
+                    })(lj_el);
+                }
+                lj_el.style.left = (lj_i * 110) + "px";
+                lj_el.querySelector(".lj_idx").textContent = lj_i;
+                lj_el.querySelector(".lj_name").textContent = lj_f.name;
+                lj_el.querySelector(".lj_price").textContent = "¥" + lj_f.price;
+                lj_el.querySelector(".lj_nidx").textContent = "-" + (lj_basket.length - lj_i);
+            }
+            for(var lj_id in lj_nodes){
+                if(!lj_alive[lj_id]){ lj_drop(lj_id); }
+            }
+
+            var lj_w = lj_basket.length * 110;
+            lj_shelf.style.width = (lj_w > 0 ? lj_w - 14 : 0) + "px";
+            document.getElementById("lj_empty").style.display = lj_basket.length ? "none" : "block";
+
+            // 名字数组（map 的结果）
+            document.getElementById("lj_names_row").innerHTML =
+                '<span>名字清单（map 得到）：</span>' +
+                lj_chips(lj_names().length ? lj_names() : []) +
+                '<span style="color:#b39a68">　← lj_basket.map(f =&gt; f.name)</span>';
+
+            // 数组字面量
+            var lj_s = "";
+            for(lj_i = 0; lj_i < lj_basket.length; lj_i++){
+                if(lj_i > 0){ lj_s += ", "; }
+                lj_s += '<span class="lj_k">{</span>name:<span class="lj_s">"' + lj_basket[lj_i].name +
+                        '"</span>, price:<span class="lj_n">' + lj_basket[lj_i].price + '</span><span class="lj_k">}</span>';
+            }
+            document.getElementById("lj_literal").innerHTML =
+                '<span class="lj_k">var</span> lj_basket = [<span>' + (lj_s ? lj_s : "") + '</span>];';
+
+            // 统计
+            document.getElementById("lj_len").textContent = lj_basket.length;
+            var lj_sum = 0;
+            for(lj_i = 0; lj_i < lj_basket.length; lj_i++){ lj_sum += lj_basket[lj_i].price; }
+            document.getElementById("lj_total").textContent = "¥" + lj_sum;
+        }
+        function lj_drop(lj_id){
+            var lj_el = lj_nodes[lj_id];
+            if(!lj_el){ return; }
+            delete lj_nodes[lj_id];
+            lj_el.classList.add("lj_leave");
+            setTimeout(function(){
+                if(lj_el.parentNode){ lj_el.parentNode.removeChild(lj_el); }
+            }, 360);
+        }
+        function lj_flash(lj_el, lj_cls, lj_ms){
+            if(!lj_el){ return; }
+            lj_el.classList.add(lj_cls);
+            setTimeout(function(){ lj_el.classList.remove(lj_cls); }, lj_ms);
+        }
+        function lj_console(lj_txt){
+            var lj_box = document.getElementById("lj_log");
+            if(!lj_loged){ lj_box.innerHTML = ""; lj_loged = true; }
+            var lj_line = document.createElement("div");
+            lj_line.innerHTML = '<span class="lj_tag_c">&gt;</span> ' + lj_txt;
+            lj_box.appendChild(lj_line);
+            while(lj_box.children.length > 8){ lj_box.removeChild(lj_box.firstChild); }
+            lj_box.scrollTop = lj_box.scrollHeight;
+            console.log(lj_txt);
+        }
+        function lj_show(lj_r){
+            document.getElementById("lj_code").textContent = lj_r.code;
+            document.getElementById("lj_desc").innerHTML = lj_r.desc;
+            document.getElementById("lj_ret").innerHTML =
+                (lj_r.change
+                    ? '<span class="lj_flag lj_yes">改变原数组</span>'
+                    : '<span class="lj_flag lj_no">不改变原数组</span>') + lj_r.ret;
+        }
+        function lj_index(){
+            var lj_v = parseInt(document.getElementById("lj_idx").value, 10);
+            if(isNaN(lj_v)){ lj_v = 1; }
+            if(lj_v > lj_basket.length){ lj_v = lj_basket.length; }
+            if(lj_v < -lj_basket.length){ lj_v = -lj_basket.length; }
+            return lj_v;
+        }
+        function lj_key(){
+            var lj_v = document.getElementById("lj_key_input").value.replace(/\s/g, "");
+            return lj_v === "" ? "葡萄" : lj_v;
+        }
+        function lj_emptyWarn(lj_m){
+            return {
+                code: "lj_basket." + lj_m + "();   // 果篮是空的，无法执行",
+                desc: "果篮里已经没有水果了。先点<b>「重置果篮」</b>，或者用 push() 放几个进去再试。",
+                ret: "当前 lj_basket.length = 0",
+                change: false
+            };
+        }
+        function lj_reset(){
+            var lj_shelf = document.getElementById("lj_shelf");
+            lj_shelf.innerHTML = "";
+            lj_nodes = {};
+            lj_basket = [];
+            var lj_init = [0, 1, 2, 3, 4];
+            for(var lj_i = 0; lj_i < lj_init.length; lj_i++){
+                lj_basket.push(lj_make(lj_pool[lj_init[lj_i]]));
+            }
+            lj_render();
+        }
+
+        /* ================= 各方法的演示 ================= */
+        var lj_act = {
+            /* ---------- 一、添加 ---------- */
+            push: function(){
+                var lj_f = lj_make(lj_rand());
+                lj_basket.push(lj_f);
+                lj_render();
+                lj_flash(lj_nodes[lj_f.id], "lj_hit", 1100);
+                return {
+                    code: '// 在数组末尾添加元素，一次可添加多个\nlj_basket.push({name:"' + lj_f.name + '", price:' + lj_f.price + '});\n// 返回值 → ' + lj_basket.length + '（添加后的新长度）',
+                    desc: '<b>push()</b> 在数组<b>末尾（队尾）</b>加入元素，就像往果篮最右边再放一筐水果，位置是最后一个下标；返回加入后的新长度。',
+                    ret: '果篮现在是：' + lj_chips(lj_names()) + '　共 ' + lj_basket.length + ' 件',
+                    change: true
+                };
+            },
+            unshift: function(){
+                var lj_f = lj_make(lj_rand());
+                lj_basket.unshift(lj_f);
+                lj_render();
+                lj_flash(lj_nodes[lj_f.id], "lj_hit", 1100);
+                return {
+                    code: '// 在数组开头添加元素，原来元素的下标全部 +1\nlj_basket.unshift({name:"' + lj_f.name + '", price:' + lj_f.price + '});\n// 返回值 → ' + lj_basket.length + '（添加后的新长度）',
+                    desc: '<b>unshift()</b> 在数组<b>开头（队首）</b>插入元素，原来所有元素都要向右挪一格（下标 +1），所以效率比 push 低一点；返回新长度。',
+                    ret: '果篮现在是：' + lj_chips(lj_names()) + '　共 ' + lj_basket.length + ' 件',
+                    change: true
+                };
+            },
+            spliceAdd: function(){
+                var lj_i = lj_index();
+                var lj_f = lj_make(lj_rand());
+                lj_basket.splice(lj_i, 0, lj_f);
+                lj_render();
+                lj_flash(lj_nodes[lj_f.id], "lj_hit", 1100);
+                return {
+                    code: '// splice(起始下标, 删除个数, 要插入的元素…)\nlj_basket.splice(' + lj_i + ', 0, {name:"' + lj_f.name + '", price:' + lj_f.price + '});\n// 删除 0 个 → 返回值 []（空数组）',
+                    desc: '<b>splice()</b> 是数组里的"万能剪刀"：第二个参数写 0，就变成<b>在任意位置插入</b>。它可以同时删除和插入，是唯一能"中间动手"的方法。',
+                    ret: '在下标 ' + lj_i + ' 处插入了「' + lj_f.name + '」：' + lj_chips(lj_names()),
+                    change: true
+                };
+            },
+
+            /* ---------- 二、删除 ---------- */
+            pop: function(){
+                if(!lj_basket.length){ return lj_emptyWarn("pop"); }
+                var lj_f = lj_basket[lj_basket.length - 1];
+                var lj_el = lj_nodes[lj_f.id];
+                if(lj_el){ lj_el.classList.add("lj_bye"); }
+                lj_basket.pop();
+                lj_render();
+                return {
+                    code: '// 删除并返回最后一个元素\nvar lj_last = lj_basket.pop();\n// 返回值 → {name:"' + lj_f.name + '", price:' + lj_f.price + '}',
+                    desc: '<b>pop()</b> 从数组<b>末尾</b>弹出最后一个元素（栈的"出栈"），返回被弹出的那个元素，数组长度减 1。',
+                    ret: '被弹出的是「' + lj_f.name + ' ¥' + lj_f.price + '」，剩下 ' + lj_basket.length + ' 件：' + lj_chips(lj_names()),
+                    change: true
+                };
+            },
+            shift: function(){
+                if(!lj_basket.length){ return lj_emptyWarn("shift"); }
+                var lj_f = lj_basket[0];
+                var lj_el = lj_nodes[lj_f.id];
+                if(lj_el){ lj_el.classList.add("lj_bye"); }
+                lj_basket.shift();
+                lj_render();
+                return {
+                    code: '// 删除并返回第一个元素，后面元素下标全部 -1\nvar lj_first = lj_basket.shift();\n// 返回值 → {name:"' + lj_f.name + '", price:' + lj_f.price + '}',
+                    desc: '<b>shift()</b> 从数组<b>开头</b>取走第一个元素（队列的"出队"），后面所有元素向左挪一格，返回被取走的元素。',
+                    ret: '被取走的是「' + lj_f.name + ' ¥' + lj_f.price + '」，剩下 ' + lj_basket.length + ' 件：' + lj_chips(lj_names()),
+                    change: true
+                };
+            },
+            spliceDel: function(){
+                if(!lj_basket.length){ return lj_emptyWarn("splice"); }
+                var lj_i = lj_index();
+                var lj_gone = lj_basket.splice(lj_i, 1);
+                lj_render();
+                var lj_txt = lj_gone.length
+                    ? '被删掉的是「' + lj_gone[0].name + ' ¥' + lj_gone[0].price + '」'
+                    : '下标 ' + lj_i + ' 越界，没有删除任何元素';
+                return {
+                    code: '// splice(起始下标, 删除个数)\nvar lj_gone = lj_basket.splice(' + lj_i + ', 1);\n// 返回值 → 被删元素组成的新数组 [' + (lj_gone.length ? '{name:"' + lj_gone[0].name + '"…}' : '') + ']',
+                    desc: '<b>splice()</b> 从指定下标开始删除 n 个元素，返回<b>被删元素组成的新数组</b>（没删到就是空数组）。它直接修改原数组，是最常用的删除方式。',
+                    ret: lj_txt + '，剩下 ' + lj_basket.length + ' 件：' + lj_chips(lj_names()),
+                    change: true
+                };
+            },
+
+            /* ---------- 三、截取与拼接 ---------- */
+            slice: function(){
+                var lj_part = lj_basket.slice(1, 3);
+                for(var lj_i = 1; lj_i < 3 && lj_i < lj_basket.length; lj_i++){
+                    lj_flash(lj_nodes[lj_basket[lj_i].id], "lj_hit", 1300);
+                }
+                var lj_pn = [];
+                for(var lj_j = 0; lj_j < lj_part.length; lj_j++){ lj_pn.push(lj_part[lj_j].name); }
+                return {
+                    code: '// slice(开始下标, 结束下标) —— 含头不含尾 [1, 3)\nvar lj_part = lj_basket.slice(1, 3);\n// 返回值 → 新数组（原数组不变）',
+                    desc: '<b>slice()</b> 像"切片"一样截出一段，<b>含头不含尾</b>（slice(1,3) 取的是下标 1、2 两个）。它<b>不修改原数组</b>，返回截出来的新数组；省略第二个参数就一直截到末尾。',
+                    ret: '截出的新数组：' + lj_chips(lj_pn) + '　（原数组仍是 ' + lj_basket.length + ' 件）',
+                    change: false
+                };
+            },
+            concat: function(){
+                var lj_add = [{name:"菠萝", price:9}, {name:"樱桃", price:20}];
+                var lj_newArr = lj_basket.concat(lj_add);
+                var lj_all = [];
+                for(var lj_i = 0; lj_i < lj_newArr.length; lj_i++){ lj_all.push(lj_newArr[lj_i].name); }
+                for(var lj_k = 0; lj_k < lj_basket.length; lj_k++){
+                    lj_flash(lj_nodes[lj_basket[lj_k].id], "lj_hit", 900);
+                }
+                return {
+                    code: 'var lj_add = [{name:"菠萝", price:9}, {name:"樱桃", price:20}];\nvar lj_newArr = lj_basket.concat(lj_add);   // 拼接两个数组\n// 返回值 → 新数组（原数组不变）',
+                    desc: '<b>concat()</b> 把两个（或多个）数组<b>首尾相接</b>成一个新数组，原来的两个数组都不受影响。它还可以直接拼普通值：arr.concat(1, 2)。',
+                    ret: '拼接后的新数组（黄色为新增）：' + lj_chips(lj_all, lj_basket.length) + '　共 ' + lj_all.length + ' 件；原数组仍是 ' + lj_basket.length + ' 件',
+                    change: false
+                };
+            },
+            join: function(){
+                var lj_n = lj_names();
+                var lj_str = lj_n.join("、");
+                for(var lj_i = 0; lj_i < lj_basket.length; lj_i++){
+                    lj_flash(lj_nodes[lj_basket[lj_i].id], "lj_hit", 900);
+                }
+                return {
+                    code: '// 数组 → 字符串，参数就是元素之间的"胶水"\nlj_basket.map(f => f.name).join("、");\n// 返回值 → "' + lj_str + '"\n\n// 不写参数时默认用逗号：[1,2,3].join() → "1,2,3"',
+                    desc: '<b>join()</b> 把数组所有元素用指定分隔符连成一个<b>字符串</b>，是 split() 的逆操作。常用于把数组内容拼成一句话或 URL 参数。',
+                    ret: '拼成字符串：<b>“' + lj_str + '”</b>　（类型：' + typeof lj_str + '）',
+                    change: false
+                };
+            },
+            flat: function(){
+                var lj_nested = [["苹果", "香蕉"], ["葡萄"], ["西瓜", "芒果", "草莓"]];
+                var lj_flat = lj_nested.flat();
+                return {
+                    code: 'var lj_nested = [["苹果","香蕉"], ["葡萄"], ["西瓜","芒果","草莓"]];\nlj_nested.flat();      // 默认拉平一层\n// 返回值 → ["苹果","香蕉","葡萄","西瓜","芒果","草莓"]\n\n// 多维数组可以用参数指定层数：arr.flat(2)、arr.flat(Infinity)',
+                    desc: '<b>flat()</b> 把"数组套数组"的<b>二维数组拍平成一维</b>，默认只拆一层，传数字可以指定拆几层。它不修改原数组，返回拍平后的新数组。',
+                    ret: '原数组：' + lj_chips(['[苹果,香蕉]', '[葡萄]', '[西瓜,芒果,草莓]']) +
+                         '<br>拍平后：' + lj_chips(lj_flat) + '　（本例与果篮无关，果篮不受影响）',
+                    change: false
+                };
+            },
+
+            /* ---------- 四、查找 ---------- */
+            indexOf: function(){
+                var lj_k = lj_key();
+                var lj_n = lj_names();
+                var lj_pos = lj_n.indexOf(lj_k);
+                if(lj_pos > -1){ lj_flash(lj_nodes[lj_basket[lj_pos].id], "lj_hit", 1300); }
+                return {
+                    code: '// 数组元素是对象，先 map 出名字再查\nvar lj_names = lj_basket.map(f => f.name);\nlj_names.indexOf("' + lj_k + '");\n// 找到 → ' + lj_pos + '（下标）　找不到 → -1',
+                    desc: '<b>indexOf()</b> 从<b>前往后</b>查找，返回第一个匹配元素的下标；找不到就返回 <b>-1</b>。它用的是严格相等 ===，所以对象数组通常要先取出某个属性值再查。',
+                    ret: lj_pos > -1
+                        ? '「' + lj_k + '」在下标 ' + lj_pos + ' 位置（第 ' + (lj_pos + 1) + ' 个）'
+                        : '果篮里没有「' + lj_k + '」，返回 -1',
+                    change: false
+                };
+            },
+            lastIndexOf: function(){
+                var lj_k = lj_key();
+                var lj_n = lj_names();
+                var lj_pos = lj_n.lastIndexOf(lj_k);
+                if(lj_pos > -1){ lj_flash(lj_nodes[lj_basket[lj_pos].id], "lj_hit", 1300); }
+                return {
+                    code: 'var lj_names = lj_basket.map(f => f.name);\nlj_names.lastIndexOf("' + lj_k + '");   // 从后往前找\n// 找到 → ' + lj_pos + '（最后一次出现的下标）',
+                    desc: '<b>lastIndexOf()</b> 与 indexOf 方向相反，从<b>后往前</b>找，返回最后一次出现的下标；同样找不到返回 -1。数组里有重复元素时它才和 indexOf 结果不同。',
+                    ret: lj_pos > -1
+                        ? '「' + lj_k + '」最后一次出现在下标 ' + lj_pos
+                        : '果篮里没有「' + lj_k + '」，返回 -1',
+                    change: false
+                };
+            },
+            includes: function(){
+                var lj_k = lj_key();
+                var lj_n = lj_names();
+                var lj_ok = lj_n.includes(lj_k);
+                var lj_pos = lj_n.indexOf(lj_k);
+                if(lj_pos > -1){ lj_flash(lj_nodes[lj_basket[lj_pos].id], "lj_hit", 1300); }
+                return {
+                    code: 'var lj_names = lj_basket.map(f => f.name);\nlj_names.includes("' + lj_k + '");\n// 返回值 → ' + lj_ok + '（布尔值 true / false）',
+                    desc: '<b>includes()</b> 只回答"有没有"，返回 true / false，比 indexOf() &gt; -1 更好读。<b>注意</b>：它判断对象时比较的是引用地址，所以对象数组一般也先取属性值。',
+                    ret: '果篮里' + (lj_ok ? '<b>有</b>' : '<b>没有</b>') + '「' + lj_k + '」→ 返回 ' + lj_ok,
+                    change: false
+                };
+            },
+            find: function(){
+                var lj_k = lj_key();
+                var lj_f = lj_basket.find(function(lj_x){ return lj_x.name === lj_k; });
+                if(lj_f){ lj_flash(lj_nodes[lj_f.id], "lj_hit", 1300); }
+                return {
+                    code: '// 传入一个返回 true/false 的回调函数\nvar lj_f = lj_basket.find(function(f){\n    return f.name === "' + lj_k + '";\n});\n// 返回值 → ' + (lj_f ? '{name:"' + lj_f.name + '", price:' + lj_f.price + '}' : 'undefined'),
+                    desc: '<b>find()</b> 按<b>自定义条件</b>找元素，返回<b>第一个</b>让回调返回 true 的元素本身；一个都没找到就返回 undefined。条件可以任意写，比 indexOf 灵活得多。',
+                    ret: lj_f
+                        ? '找到了：{name:"' + lj_f.name + '", price:' + lj_f.price + '}（完整对象）'
+                        : '没有满足条件的水果 → undefined',
+                    change: false
+                };
+            },
+            findIndex: function(){
+                var lj_k = lj_key();
+                var lj_p = lj_basket.findIndex(function(lj_x){ return lj_x.name === lj_k; });
+                if(lj_p > -1){ lj_flash(lj_nodes[lj_basket[lj_p].id], "lj_hit", 1300); }
+                return {
+                    code: 'var lj_p = lj_basket.findIndex(function(f){\n    return f.name === "' + lj_k + '";\n});\n// 返回值 → ' + lj_p + '（找不到为 -1）',
+                    desc: '<b>findIndex()</b> 和 find() 用一样的条件，但返回的是<b>下标</b>而不是元素，找不到返回 -1。拿到下标后就可以配合 splice 做"按条件删除"。',
+                    ret: lj_p > -1
+                        ? '「' + lj_k + '」的下标是 ' + lj_p + '，可以用 splice(' + lj_p + ', 1) 删掉它'
+                        : '没有找到 → -1',
+                    change: false
+                };
+            },
+            at: function(){
+                var lj_a = lj_basket.at(1);
+                var lj_b = lj_basket.at(-1);
+                if(lj_a){ lj_flash(lj_nodes[lj_a.id], "lj_hit", 1300); }
+                if(lj_b){ lj_flash(lj_nodes[lj_b.id], "lj_hit", 1300); }
+                return {
+                    code: 'lj_basket.at(1);     // 正数下标：第 2 个元素 → ' + (lj_a ? lj_a.name : 'undefined') +
+                          '\nlj_basket.at(-1);    // 负数下标：倒数第 1 个 → ' + (lj_b ? lj_b.name : 'undefined') +
+                          '\n// 等价于 lj_basket[lj_basket.length - 1]，但写法更短',
+                    desc: '<b>at()</b> 按下标取元素，最大的好处是<b>支持负数</b>：at(-1) 就是最后一个，at(-2) 是倒数第二个，不用再写 arr[arr.length-1]。',
+                    ret: 'at(1) → ' + (lj_a ? lj_a.name : 'undefined') + '　　at(-1) → ' + (lj_b ? lj_b.name : 'undefined') +
+                         '<br>框子右下角的灰色小标签就是对应的负数下标',
+                    change: false
+                };
+            },
+
+            /* ---------- 五、遍历与变换 ---------- */
+            forEach: function(){
+                var lj_lines = [];
+                for(var lj_i = 0; lj_i < lj_basket.length; lj_i++){
+                    (function(lj_f, lj_n){
+                        setTimeout(function(){
+                            lj_flash(lj_nodes[lj_f.id], "lj_hit", 480);
+                            lj_console('第 ' + lj_n + ' 个：' + lj_f.name + '　¥' + lj_f.price);
+                        }, lj_n * 260);
+                    })(lj_basket[lj_i], lj_i);
+                    lj_lines.push(lj_i + " → " + lj_basket[lj_i].name + " ¥" + lj_basket[lj_i].price);
+                }
+                return {
+                    code: '// 依次处理每个元素（元素, 下标, 数组本身）\nlj_basket.forEach(function(f, i){\n    console.log(i, f.name, f.price);\n});\n// 返回值 → undefined（它只负责遍历，不产生新数组）',
+                    desc: '<b>forEach()</b> 就是 for 循环的"优雅写法"：把每个元素依次交给回调函数处理，常用来渲染列表、发请求。<b>它没有返回值</b>，中途也<b>不能 break</b>。',
+                    ret: '正在依次点亮每个筐子（见左下控制台）：<br>' + lj_lines.join("<br>"),
+                    change: false
+                };
+            },
+            map: function(){
+                var lj_new = lj_basket.map(function(lj_f){ return (lj_f.price * 0.8).toFixed(1); });
+                for(var lj_i = 0; lj_i < lj_basket.length; lj_i++){
+                    (function(lj_f, lj_n){
+                        setTimeout(function(){
+                            var lj_el = lj_nodes[lj_f.id];
+                            if(!lj_el){ return; }
+                            lj_el.classList.add("lj_flip");
+                            lj_el.querySelector(".lj_price").textContent = "¥" + (lj_f.price * 0.8).toFixed(1);
+                            setTimeout(function(){
+                                lj_el.classList.remove("lj_flip");
+                                if(lj_nodes[lj_f.id]){
+                                    lj_nodes[lj_f.id].querySelector(".lj_price").textContent = "¥" + lj_f.price;
+                                }
+                            }, 700);
+                        }, lj_n * 150);
+                    })(lj_basket[lj_i], lj_i);
+                }
+                return {
+                    code: '// 全部打八折：返回一个"长度相同、内容变了"的新数组\nvar lj_new = lj_basket.map(function(f){\n    return (f.price * 0.8).toFixed(1);\n});\n// 返回值 → [' + lj_new.join(", ") + ']',
+                    desc: '<b>map()</b> 是"映射"：把每个元素送进回调，用<b>回调的返回值</b>组成一个新数组，<b>新旧数组长度相同</b>，原数组不变。常用于从一个对象数组里提取某个字段。',
+                    ret: '八折后的价格新数组：' + lj_chips(lj_new) + '<br>（筐子上的价格只是临时演示，map 不会改动原数组）',
+                    change: false
+                };
+            },
+            filter: function(){
+                var lj_keep = lj_basket.filter(function(lj_f){ return lj_f.price >= 10; });
+                for(var lj_i = 0; lj_i < lj_basket.length; lj_i++){
+                    var lj_el = lj_nodes[lj_basket[lj_i].id];
+                    if(!lj_el){ continue; }
+                    if(lj_basket[lj_i].price >= 10){
+                        lj_flash(lj_el, "lj_hit", 1600);
+                    }else{
+                        lj_el.classList.add("lj_dim");
+                    }
+                }
+                setTimeout(function(){
+                    for(var lj_id in lj_nodes){ lj_nodes[lj_id].classList.remove("lj_dim"); }
+                }, 1700);
+                var lj_pn = [];
+                for(var lj_j = 0; lj_j < lj_keep.length; lj_j++){ lj_pn.push(lj_keep[lj_j].name + "¥" + lj_keep[lj_j].price); }
+                return {
+                    code: '// 挑出单价 ≥ 10 元的水果\nvar lj_keep = lj_basket.filter(function(f){\n    return f.price >= 10;\n});\n// 返回值 → 符合条件的新数组（原数组不变）',
+                    desc: '<b>filter()</b> 是"过滤器"：回调返回 true 的元素<b>留下</b>，返回 false 的<b>淘汰</b>，得到的新数组长度通常比原来短。页面上不合格的筐子会先变灰。',
+                    ret: '单价 ≥ 10 元的有：' + lj_chips(lj_pn) + '　共 ' + lj_keep.length + ' 件；原数组仍是 ' + lj_basket.length + ' 件',
+                    change: false
+                };
+            },
+            reduce: function(){
+                var lj_sum = lj_basket.reduce(function(lj_s, lj_f){ return lj_s + lj_f.price; }, 0);
+                var lj_tmp = 0;
+                for(var lj_i = 0; lj_i < lj_basket.length; lj_i++){
+                    (function(lj_f, lj_n){
+                        setTimeout(function(){
+                            lj_tmp += lj_f.price;
+                            lj_flash(lj_nodes[lj_f.id], "lj_hit", 420);
+                            document.getElementById("lj_total").textContent = "¥" + lj_tmp;
+                        }, lj_n * 280);
+                    })(lj_basket[lj_i], lj_i);
+                }
+                return {
+                    code: '// 收银员：把数组"汇总"成一个值\nvar lj_sum = lj_basket.reduce(function(sum, f){\n    return sum + f.price;   // sum 是上一轮的累计值\n}, 0);                      // 0 是初始值\n// 返回值 → ' + lj_sum,
+                    desc: '<b>reduce()</b> 是"归并"：从左往右遍历，把结果<b>累积</b>到一个变量里，最后返回一个值（数字、字符串、对象、数组都行）。第二个参数是初始值，求和时一般写 0。',
+                    ret: '果篮总价 = <b>¥' + lj_sum + '</b>（页面右上角的合计会逐个累加演示）<br>均价 ≈ ¥' + (lj_basket.length ? (lj_sum / lj_basket.length).toFixed(1) : 0),
+                    change: false
+                };
+            },
+            some: function(){
+                var lj_ok = lj_basket.some(function(lj_f){ return lj_f.price >= 20; });
+                for(var lj_i = 0; lj_i < lj_basket.length; lj_i++){
+                    if(lj_basket[lj_i].price >= 20){
+                        lj_flash(lj_nodes[lj_basket[lj_i].id], "lj_hit", 1300);
+                    }
+                }
+                return {
+                    code: '// 有没有单价 ≥ 20 元的"贵族水果"？\nlj_basket.some(function(f){ return f.price >= 20; });\n// 返回值 → ' + lj_ok + '（只要有一个满足就是 true）',
+                    desc: '<b>some()</b> 问"有没有至少一个满足条件的"，一旦找到就<b>立刻停止</b>遍历并返回 true；全都不满足才返回 false。类似逻辑里的"或"。',
+                    ret: '结果：' + lj_ok + ' —— ' + (lj_ok ? '有单价 ≥ 20 元的水果（已高亮）' : '暂时没有单价 ≥ 20 元的水果'),
+                    change: false
+                };
+            },
+            every: function(){
+                var lj_ok = lj_basket.every(function(lj_f){ return lj_f.price <= 20; });
+                for(var lj_i = 0; lj_i < lj_basket.length; lj_i++){
+                    if(lj_basket[lj_i].price > 20){
+                        lj_flash(lj_nodes[lj_basket[lj_i].id], "lj_hit", 1300);
+                    }
+                }
+                return {
+                    code: '// 是不是每一件都在 20 元以内？\nlj_basket.every(function(f){ return f.price <= 20; });\n// 返回值 → ' + lj_ok + '（必须全部满足才是 true）',
+                    desc: '<b>every()</b> 问"是不是全部都满足条件"，只要遇到一个不满足就返回 false。类似逻辑里的"且"。空数组调用 every 会返回 true。',
+                    ret: '结果：' + lj_ok + ' —— ' + (lj_ok ? '所有水果都在 20 元以内' : '有超过 20 元的水果（已高亮）'),
+                    change: false
+                };
+            },
+
+            /* ---------- 六、排序与属性 ---------- */
+            sort: function(){
+                lj_basket.sort(function(lj_a, lj_b){ return lj_a.price - lj_b.price; });
+                lj_render();
+                var lj_pn = [];
+                for(var lj_i = 0; lj_i < lj_basket.length; lj_i++){ lj_pn.push(lj_basket[lj_i].name + "¥" + lj_basket[lj_i].price); }
+                return {
+                    code: '// 数字排序必须传比较函数\nlj_basket.sort(function(a, b){\n    return a.price - b.price;   // 升序；b.price - a.price 为降序\n});\n// 返回值 → 排序后的同一个数组（原数组被改变）',
+                    desc: '<b>sort()</b> 默认会把元素转成<b>字符串按字典序</b>排（10 会排在 2 前面！），所以排数字一定要写比较函数：返回负数 a 在前、正数 b 在前、0 不变。',
+                    ret: '按单价升序排列：' + lj_chips(lj_pn) + '<br>筐子会自动滑到新位置（sort 直接修改原数组）',
+                    change: true
+                };
+            },
+            reverse: function(){
+                lj_basket.reverse();
+                lj_render();
+                return {
+                    code: 'lj_basket.reverse();\n// 返回值 → 颠倒后的同一个数组（原数组被改变）',
+                    desc: '<b>reverse()</b> 把数组<b>首尾颠倒</b>，第一个变最后一个。它同样直接修改原数组；想保留原顺序，请先 slice() 复制一份再 reverse。',
+                    ret: '颠倒后的顺序：' + lj_chips(lj_names()),
+                    change: true
+                };
+            },
+            base: function(){
+                return {
+                    code: 'lj_basket.length;              // ' + lj_basket.length + '（元素个数，可读写）\nArray.isArray(lj_basket);      // ' + Array.isArray(lj_basket) + '（判断是不是数组）\nArray.isArray("abc");          // false\ntypeof lj_basket;              // "object"（所以用 isArray 判断更可靠）',
+                    desc: '<b>length</b> 是数组的长度属性：读它得到元素个数，写小它可以<b>直接截断</b>数组（arr.length = 2 只留前两个）。<b>Array.isArray()</b> 用来判断一个值是不是真正的数组，比 typeof 可靠。',
+                    ret: '当前果篮：<b>' + lj_basket.length + '</b> 件水果　Array.isArray(lj_basket) = <b>' + Array.isArray(lj_basket) + '</b>',
+                    change: false
+                };
+            }
+        };
+
+        /* ================= 速查表 ================= */
+        var lj_table = [
+            ["push()", "末尾添加一个或多个元素", "新长度", "是"],
+            ["unshift()", "开头添加一个或多个元素", "新长度", "是"],
+            ["pop()", "删除最后一个元素", "被删的元素", "是"],
+            ["shift()", "删除第一个元素", "被删的元素", "是"],
+            ["splice()", "在任意位置删除 / 插入元素", "被删元素组成的数组", "是"],
+            ["slice()", "截取一段（含头不含尾）", "新数组", "否"],
+            ["concat()", "拼接多个数组", "新数组", "否"],
+            ["join()", "用分隔符连成字符串", "字符串", "否"],
+            ["flat()", "二维数组拉平成一维", "新数组", "否"],
+            ["indexOf()", "从前往后找（严格相等）", "下标或 -1", "否"],
+            ["lastIndexOf()", "从后往前找", "下标或 -1", "否"],
+            ["includes()", "判断是否包含某值", "true / false", "否"],
+            ["find()", "按条件找第一个元素", "元素或 undefined", "否"],
+            ["findIndex()", "按条件找第一个下标", "下标或 -1", "否"],
+            ["at()", "按下标取元素（支持负数）", "元素或 undefined", "否"],
+            ["forEach()", "依次遍历每个元素", "undefined", "否"],
+            ["map()", "映射成等长的新数组", "新数组", "否"],
+            ["filter()", "筛选符合条件的元素", "新数组", "否"],
+            ["reduce()", "累计归并成一个值", "累计结果", "否"],
+            ["some()", "是否有至少一个满足条件", "true / false", "否"],
+            ["every()", "是否全部满足条件", "true / false", "否"],
+            ["sort()", "排序（数字需传比较函数）", "同一数组", "是"],
+            ["reverse()", "颠倒元素顺序", "同一数组", "是"],
+            ["length", "元素个数属性", "数字", "—"],
+            ["Array.isArray()", "判断是否为数组", "true / false", "—"]
+        ];
+        (function lj_buildTable(){
+            var lj_html = "";
+            for(var lj_i = 0; lj_i < lj_table.length; lj_i++){
+                var lj_r = lj_table[lj_i];
+                lj_html += "<tr><td>" + lj_r[0] + "</td><td>" + lj_r[1] + "</td><td>" + lj_r[2] +
+                           '</td><td style="color:' + (lj_r[3] === "是" ? "#d93636" : lj_r[3] === "否" ? "#2f9e5c" : "#999") + '">' + lj_r[3] + "</td></tr>";
+            }
+            document.getElementById("lj_tb_body").innerHTML = lj_html;
+        })();
+
+        /* ================= 事件绑定 ================= */
+        var lj_btns = document.querySelectorAll(".lj_mbtn");
+        for(var lj_b = 0; lj_b < lj_btns.length; lj_b++){
+            lj_btns[lj_b].onclick = function(){
+                var lj_key2 = this.getAttribute("data-lj");
+                var lj_res = lj_act[lj_key2]();
+                lj_show(lj_res);
+                lj_console("执行 " + lj_key2 + "()　→　" + (lj_res.change ? "已改变原数组" : "原数组不变"));
+            };
+        }
+        document.getElementById("lj_reset_btn").onclick = function(){
+            lj_reset();
+            lj_console("重置果篮：['苹果','香蕉','橘子','葡萄','西瓜']");
+            document.getElementById("lj_code").textContent = "lj_basket = [苹果, 香蕉, 橘子, 葡萄, 西瓜];   // 已重置";
+            document.getElementById("lj_desc").innerHTML = "果篮已还原成 5 件初始水果。继续点击方法按钮观察数组的变化吧。";
+            document.getElementById("lj_ret").innerHTML = '<span class="lj_flag lj_no">已重置</span>当前共 ' + lj_basket.length + ' 件';
+        };
+
+        /* ================= 初始化 ================= */
+        lj_reset();
+        lj_console("页面就绪：lj_basket 初始为 5 件水果");
+    </script>
+</body>
+</html>

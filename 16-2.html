@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-10-29，大模型：GLM-5.3，功能：形象演示 JavaScript 对象 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-2 JavaScript 对象（Object）</title>
+    <link rel="stylesheet" href="font/iconfont.css">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+        }
+        .lj_container{
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 14px;
+            padding: 32px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.28);
+        }
+        .lj_head{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 2px solid #f0f0f5;
+            padding-bottom: 16px;
+            margin-bottom: 8px;
+        }
+        .lj_head h2{
+            font-size: 24px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .lj_head h2 .iconfont{
+            font-size: 26px;
+            color: #185a9d;
+        }
+        .lj_back{
+            font-size: 13px;
+            color: #185a9d;
+            text-decoration: none;
+            border: 1px solid #cfe3f5;
+            border-radius: 20px;
+            padding: 5px 14px;
+        }
+        .lj_back:hover{
+            background: #185a9d;
+            color: #fff;
+        }
+        .lj_subtitle{
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 22px;
+            line-height: 1.8;
+        }
+        .lj_subtitle b{ color: #185a9d; }
+
+        /* ===== 档案卡 ===== */
+        .lj_card{
+            width: 420px;
+            max-width: 100%;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 14px 34px rgba(24,90,157,.35);
+        }
+        .lj_card_top{
+            background: linear-gradient(135deg, #667eea 0%, #185a9d 100%);
+            color: #fff;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .lj_avatar{
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.22);
+            border: 2px solid rgba(255,255,255,.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .lj_card_title{
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .lj_card_sub{
+            font-size: 12px;
+            opacity: .82;
+            font-family: Consolas, "Courier New", monospace;
+            margin-top: 3px;
+        }
+        .lj_card_body{
+            background: #fff;
+            padding: 12px 16px 14px;
+        }
+        .lj_row{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border-radius: 8px;
+            border-bottom: 1px dashed #eef0f4;
+            transition: background .25s ease, transform .25s ease, opacity .25s ease;
+        }
+        .lj_row:last-child{ border-bottom: none; }
+        .lj_row_k{
+            color: #667eea;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+            min-width: 82px;
+            flex-shrink: 0;
+        }
+        .lj_colon{ color: #c3c8d4; }
+        .lj_row_v{
+            color: #333;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        .lj_v_fn{
+            color: #9b5de5;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+        }
+        .lj_v_obj{
+            color: #b06a00;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+        }
+        .lj_v_undef{
+            color: #b9bec9;
+            font-style: italic;
+        }
+        /* 行动画 */
+        .lj_row_in{ animation: ljRowIn .45s cubic-bezier(.3,1.3,.5,1); }
+        .lj_row_out{ transform: translateX(60px); opacity: 0; }
+        .lj_hit{ background: #fff3bf !important; }
+        .lj_bad{ background: #ffdada !important; }
+        @keyframes ljRowIn{
+            0%{ transform: translateX(-40px); opacity: 0; }
+            100%{ transform: translateX(0); opacity: 1; }
+        }
+        .lj_card_empty{
+            padding: 26px 16px;
+            text-align: center;
+            color: #b9bec9;
+            font-size: 13px;
+        }
+        .lj_chip{
+            display: inline-block;
+            background: #fff;
+            border: 1px solid #cfe3f5;
+            color: #1a5d9e;
+            border-radius: 14px;
+            padding: 2px 10px;
+            font-size: 12px;
+            margin: 2px 4px 2px 0;
+            font-family: Consolas, "Courier New", monospace;
+        }
+
+        .lj_literal{
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12.5px;
+            background: #282c34;
+            color: #abb2bf;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 16px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.7;
+        }
+        .lj_literal .lj_k{ color: #c678dd; }
+        .lj_literal .lj_s{ color: #98c379; }
+        .lj_literal .lj_n{ color: #d19a66; }
+        .lj_literal .lj_f{ color: #61afef; }
+        .lj_literal .lj_o{ color: #e5c07b; }
+
+        /* ===== 工具条 ===== */
+        .lj_tools{
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0 4px;
+            font-size: 13px;
+            color: #666;
+        }
+        .lj_input{
+            border: 1px solid #d9dde8;
+            border-radius: 6px;
+            padding: 7px 10px;
+            font-size: 13px;
+            font-family: inherit;
+            width: 110px;
+        }
+        .lj_input:focus{
+            outline: none;
+            border-color: #185a9d;
+        }
+        .lj_btn{
+            background: #185a9d;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .lj_btn:hover{ background: #124a83; }
+        .lj_btn.lj_gray{ background: #98a0b3; }
+        .lj_btn.lj_gray:hover{ background: #8890a5; }
+
+        /* ===== 方法按钮区 ===== */
+        .lj_groups{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 14px;
+            margin: 18px 0 22px;
+        }
+        .lj_group{
+            border: 1px solid #edeff5;
+            border-radius: 12px;
+            padding: 14px 16px 16px;
+            background: #fcfcff;
+        }
+        .lj_group h4{
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .lj_group h4 .lj_dot{
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #185a9d;
+        }
+        .lj_btns{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .lj_mbtn{
+            border: 1px solid #cfe3f5;
+            background: #fff;
+            color: #1a5d9e;
+            border-radius: 20px;
+            padding: 6px 13px;
+            font-size: 13px;
+            font-family: Consolas, "Courier New", monospace;
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+        .lj_mbtn:hover{
+            background: #185a9d;
+            border-color: #185a9d;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(24,90,157,.35);
+        }
+
+        /* ===== 说明面板 ===== */
+        .lj_panel{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+        .lj_col h4{
+            font-size: 14px;
+            color: #444;
+            margin: 14px 0 8px;
+        }
+        .lj_col h4:first-child{ margin-top: 0; }
+        .lj_hint{
+            font-size: 11px;
+            color: #aaa;
+            font-weight: normal;
+        }
+        .lj_code{
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12.5px;
+            background: #282c34;
+            color: #abb2bf;
+            border-radius: 8px;
+            padding: 14px 16px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.75;
+            min-height: 110px;
+        }
+        .lj_desc{
+            background: #f2f7fb;
+            border-left: 4px solid #185a9d;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 13.5px;
+            color: #555;
+            line-height: 1.9;
+            min-height: 100px;
+        }
+        .lj_desc b{ color: #185a9d; }
+        .lj_ret{
+            background: #fffbe9;
+            border-left: 4px solid #faad14;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 13.5px;
+            color: #6b5b2a;
+            line-height: 1.9;
+            min-height: 100px;
+        }
+        .lj_json{
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            background: #282c34;
+            color: #98c379;
+            border-radius: 6px;
+            padding: 10px 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-top: 6px;
+            line-height: 1.7;
+        }
+        .lj_log{
+            background: #1e2127;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            color: #8bd450;
+            height: 110px;
+            overflow-y: auto;
+            line-height: 1.8;
+        }
+        .lj_log div{ border-bottom: 1px dashed rgba(255,255,255,.08); padding: 1px 0; }
+        .lj_log .lj_tag_c{ color: #61afef; }
+
+        /* ===== 速查表 ===== */
+        .lj_tb_wrap{
+            margin-top: 26px;
+            overflow-x: auto;
+        }
+        .lj_tb{
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 620px;
+        }
+        .lj_tb th, .lj_tb td{
+            border: 1px solid #edeff5;
+            padding: 8px 10px;
+            text-align: left;
+        }
+        .lj_tb th{
+            background: #eff6fc;
+            color: #555;
+        }
+        .lj_tb td:first-child{
+            font-family: Consolas, "Courier New", monospace;
+            color: #1a5d9e;
+            white-space: nowrap;
+        }
+        .lj_tb tr:hover td{ background: #fafcff; }
+        .lj_note{
+            margin-top: 20px;
+            background: #f4faf7;
+            border-radius: 10px;
+            padding: 16px 18px;
+            font-size: 13.5px;
+            color: #666;
+            line-height: 1.9;
+        }
+        .lj_note b{ color: #185a9d; }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <div class="lj_head">
+            <h2><span class="iconfont icon-wode"></span>JavaScript 对象（Object）</h2>
+            <a class="lj_back" href="./index.html">返回首页</a>
+        </div>
+        <p class="lj_subtitle">
+            把对象想象成一张<b>学生档案卡</b>：卡片上的一条条"栏目"就是<b>属性</b>（属性名 : 属性值），
+            属性值可以是数字、字符串，甚至<b>另一张卡（嵌套对象）</b>或<b>一个动作（方法 / 函数）</b>。
+            点下面的按钮，看看这张卡会怎么变 —— <b>变黄的行</b>就是本次操作影响到的属性。
+        </p>
+
+        <!-- 档案卡 -->
+        <div class="lj_card">
+            <div class="lj_card_top">
+                <div class="lj_avatar" id="lj_avatar">?</div>
+                <div>
+                    <div class="lj_card_title" id="lj_card_name">学生档案卡</div>
+                    <div class="lj_card_sub">var lj_stu = { … }</div>
+                </div>
+            </div>
+            <div class="lj_card_body" id="lj_card_body"></div>
+        </div>
+        <div class="lj_literal" id="lj_literal"></div>
+
+        <!-- 工具条 -->
+        <div class="lj_tools">
+            <span>属性名：</span>
+            <input class="lj_input" id="lj_key_input" type="text" value="hobby">
+            <span>属性值：</span>
+            <input class="lj_input" id="lj_val_input" type="text" value="编程">
+            <button class="lj_btn lj_gray" id="lj_reset_btn">重置档案卡</button>
+        </div>
+
+        <!-- 方法按钮 -->
+        <div class="lj_groups">
+            <div class="lj_group">
+                <h4><span class="lj_dot"></span>一、创建对象</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="createLit">字面量 { }</button>
+                    <button class="lj_mbtn" data-lj="createNew">new Object()</button>
+                    <button class="lj_mbtn" data-lj="createFn">构造函数 new</button>
+                </div>
+            </div>
+            <div class="lj_group">
+                <h4><span class="lj_dot" style="background:#2f9e5c"></span>二、访问属性（用上面的属性名）</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="dot">点语法 .</button>
+                    <button class="lj_mbtn" data-lj="bracket">方括号 [ ]</button>
+                    <button class="lj_mbtn" data-lj="nested">嵌套访问</button>
+                </div>
+            </div>
+            <div class="lj_group">
+                <h4><span class="lj_dot" style="background:#e63946"></span>三、添加 / 修改 / 删除（用上面的输入框）</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="set">添加 / 修改属性</button>
+                    <button class="lj_mbtn" data-lj="del">delete 删除属性</button>
+                </div>
+            </div>
+            <div class="lj_group">
+                <h4><span class="lj_dot" style="background:#9b5de5"></span>四、遍历对象</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="forin">for...in</button>
+                    <button class="lj_mbtn" data-lj="keys">Object.keys()</button>
+                    <button class="lj_mbtn" data-lj="values">Object.values()</button>
+                    <button class="lj_mbtn" data-lj="entries">Object.entries()</button>
+                </div>
+            </div>
+            <div class="lj_group">
+                <h4><span class="lj_dot" style="background:#faad14"></span>五、判断属性是否存在</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="inOp">in 运算符</button>
+                    <button class="lj_mbtn" data-lj="hasOwn">hasOwnProperty()</button>
+                </div>
+            </div>
+            <div class="lj_group">
+                <h4><span class="lj_dot" style="background:#e07a5f"></span>六、方法 / JSON / 引用</h4>
+                <div class="lj_btns">
+                    <button class="lj_mbtn" data-lj="method">方法与 this</button>
+                    <button class="lj_mbtn" data-lj="json">JSON ↔ 对象</button>
+                    <button class="lj_mbtn" data-lj="ref">引用特性</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 说明面板 -->
+        <div class="lj_panel">
+            <div class="lj_col">
+                <h4>本次执行的代码</h4>
+                <pre class="lj_code" id="lj_code">// 点击上方任意按钮，这里会显示对应的代码
+// 右侧会给出说明与运行结果</pre>
+                <h4>控制台输出 <span class="lj_hint">console.log</span></h4>
+                <div class="lj_log" id="lj_log"></div>
+            </div>
+            <div class="lj_col">
+                <h4>方法说明</h4>
+                <div class="lj_desc" id="lj_desc">对象（Object）是<b>无序的"属性名 : 属性值"集合</b>，用花括号 { } 表示。
+它像一张档案卡：<b>属性名</b>是栏目名，<b>属性值</b>是填进去的内容；值也可以是函数（这时叫<b>方法</b>）或另一个对象（<b>嵌套</b>）。</div>
+                <h4>运行结果</h4>
+                <div class="lj_ret" id="lj_ret">等待执行 —— 结果会显示在这里。</div>
+            </div>
+        </div>
+
+        <!-- 速查表 -->
+        <div class="lj_tb_wrap">
+            <h4 style="font-size:14px;color:#444;margin-bottom:10px;">对象操作速查表</h4>
+            <table class="lj_tb">
+                <thead>
+                    <tr><th>写法</th><th>作用</th><th>示例</th></tr>
+                </thead>
+                <tbody id="lj_tb_body"></tbody>
+            </table>
+        </div>
+
+        <div class="lj_note">
+            小结：对象与数组就像<b>档案卡与一排格子</b> —— 数组按下标 0、1、2 找东西，对象按<b>属性名</b>找东西。
+            访问用 <b>obj.key 或 obj["key"]</b>；增删改直接赋值或 delete；遍历用 for...in 或 Object.keys/values/entries。
+            特别注意：<b>对象是引用类型</b>，赋值只是复制"卡片的地址"；要复制卡片本身得用 Object.assign() 或 { ...obj }。
+        </div>
+    </div>
+
+    <script>
+        /* ================= 数据 ================= */
+        var lj_stu = {};          // 当前对象（档案卡）
+        var lj_order = [];        // 属性显示顺序
+        var lj_rows = {};         // 属性名 → 卡片上的行元素
+        var lj_loged = false;
+
+        function lj_esc(lj_s){
+            return String(lj_s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+        function lj_fmt(lj_v){
+            if(typeof lj_v === "function"){ return "ƒ () { … }"; }
+            if(lj_v === null){ return "null"; }
+            if(typeof lj_v === "object"){
+                var lj_parts = [];
+                for(var lj_k in lj_v){ lj_parts.push(lj_k + ':"' + lj_v[lj_k] + '"'); }
+                return "{ " + lj_parts.join(", ") + " }";
+            }
+            if(typeof lj_v === "string"){ return '"' + lj_v + '"'; }
+            return String(lj_v);
+        }
+        function lj_key(){
+            var lj_v = document.getElementById("lj_key_input").value.replace(/\s/g, "");
+            return lj_v === "" ? "hobby" : lj_v;
+        }
+        function lj_val(){
+            var lj_v = document.getElementById("lj_val_input").value;
+            if(lj_v === ""){ return ""; }
+            var lj_n = Number(lj_v);
+            return isNaN(lj_n) ? lj_v : lj_n;
+        }
+        function lj_emptyWarn(lj_t){
+            return {
+                code: "// 档案卡是空的（{}），先点「重置档案卡」或添加属性",
+                desc: "对象里现在一条属性都没有。点<b>「重置档案卡」</b>，或用「添加属性」按钮往里填内容。",
+                ret: "当前 lj_stu = {}",
+                change: false
+            };
+        }
+
+        /* ================= 渲染 ================= */
+        function lj_render(){
+            var lj_body = document.getElementById("lj_card_body");
+            var lj_seen = {};
+            var lj_i, lj_k, lj_el;
+
+            for(lj_i = 0; lj_i < lj_order.length; lj_i++){
+                lj_k = lj_order[lj_i];
+                if(!(lj_k in lj_stu)){ continue; }
+                lj_seen[lj_k] = true;
+                lj_el = lj_rows[lj_k];
+                if(!lj_el){
+                    lj_el = document.createElement("div");
+                    lj_el.className = "lj_row lj_row_in";
+                    lj_el.setAttribute("data-key", lj_k);
+                    lj_el.innerHTML = '<span class="lj_row_k"></span><span class="lj_colon">:</span><span class="lj_row_v"></span>';
+                    lj_body.appendChild(lj_el);
+                    lj_rows[lj_k] = lj_el;
+                    (function(lj_e){
+                        setTimeout(function(){ lj_e.classList.remove("lj_row_in"); }, 460);
+                    })(lj_el);
+                }
+                var lj_v = lj_stu[lj_k];
+                lj_el.querySelector(".lj_row_k").textContent = lj_k;
+                var lj_vEl = lj_el.querySelector(".lj_row_v");
+                lj_vEl.textContent = lj_fmt(lj_v);
+                lj_vEl.className = "lj_row_v"
+                    + (typeof lj_v === "function" ? " lj_v_fn" : "")
+                    + (typeof lj_v === "object" && lj_v !== null ? " lj_v_obj" : "")
+                    + (lj_v === undefined ? " lj_v_undef" : "");
+            }
+            for(var lj_rk in lj_rows){
+                if(!lj_seen[lj_rk]){
+                    var lj_old = lj_rows[lj_rk];
+                    delete lj_rows[lj_rk];
+                    lj_old.classList.add("lj_row_out");
+                    (function(lj_e){
+                        setTimeout(function(){ if(lj_e.parentNode){ lj_e.parentNode.removeChild(lj_e); } }, 340);
+                    })(lj_old);
+                }
+            }
+
+            // 卡片头部 & 字面量
+            var lj_name = typeof lj_stu.name === "string" ? lj_stu.name : "(无名)";
+            document.getElementById("lj_avatar").textContent = lj_name.charAt(0);
+            document.getElementById("lj_card_name").textContent = lj_name;
+
+            var lj_html = '<span class="lj_k">var</span> lj_stu = {\n';
+            var lj_first = true;
+            for(lj_i = 0; lj_i < lj_order.length; lj_i++){
+                lj_k = lj_order[lj_i];
+                if(!(lj_k in lj_stu)){ continue; }
+                if(!lj_first){ lj_html += ",\n"; }
+                lj_first = false;
+                var lj_v2 = lj_stu[lj_k];
+                var lj_vTxt;
+                if(typeof lj_v2 === "function"){
+                    lj_vTxt = '<span class="lj_f">function () { … }</span>';
+                }else if(typeof lj_v2 === "object" && lj_v2 !== null){
+                    var lj_parts = [];
+                    for(var lj_k2 in lj_v2){ lj_parts.push(lj_k2 + ':<span class="lj_s">"' + lj_esc(lj_v2[lj_k2]) + '"</span>'); }
+                    lj_vTxt = '<span class="lj_o">{</span> ' + lj_parts.join(", ") + ' <span class="lj_o">}</span>';
+                }else if(typeof lj_v2 === "string"){
+                    lj_vTxt = '<span class="lj_s">"' + lj_esc(lj_v2) + '"</span>';
+                }else{
+                    lj_vTxt = '<span class="lj_n">' + lj_esc(lj_v2) + '</span>';
+                }
+                lj_html += '    <span class="lj_k">' + lj_esc(lj_k) + '</span>: ' + lj_vTxt;
+            }
+            lj_html += "\n};";
+            document.getElementById("lj_literal").innerHTML = lj_html;
+        }
+        function lj_rowEl(lj_k){
+            return document.querySelector('.lj_row[data-key="' + lj_k + '"]');
+        }
+        function lj_flashRow(lj_k, lj_cls, lj_ms){
+            var lj_el = lj_rowEl(lj_k);
+            if(!lj_el){ return; }
+            lj_el.classList.add(lj_cls);
+            setTimeout(function(){ lj_el.classList.remove(lj_cls); }, lj_ms);
+        }
+        function lj_console(lj_txt){
+            var lj_box = document.getElementById("lj_log");
+            if(!lj_loged){ lj_box.innerHTML = ""; lj_loged = true; }
+            var lj_line = document.createElement("div");
+            lj_line.innerHTML = '<span class="lj_tag_c">&gt;</span> ' + lj_txt;
+            lj_box.appendChild(lj_line);
+            while(lj_box.children.length > 8){ lj_box.removeChild(lj_box.firstChild); }
+            lj_box.scrollTop = lj_box.scrollHeight;
+            console.log(lj_txt);
+        }
+        function lj_show(lj_r){
+            document.getElementById("lj_code").textContent = lj_r.code;
+            document.getElementById("lj_desc").innerHTML = lj_r.desc;
+            document.getElementById("lj_ret").innerHTML = lj_r.ret;
+        }
+        function lj_reset(){
+            lj_stu = {
+                name: "李佳",
+                age: 20,
+                gender: "男",
+                hobby: "网页设计",
+                address: { city: "长沙", district: "岳麓区" }
+            };
+            lj_order = ["name", "age", "gender", "hobby", "address"];
+            var lj_body = document.getElementById("lj_card_body");
+            lj_body.innerHTML = '<div class="lj_card_empty" id="lj_card_empty" style="display:none">卡片空空如也 —— 点「重置档案卡」或添加属性</div>';
+            lj_rows = {};
+            lj_render();
+        }
+        function lj_setObj(lj_obj, lj_keys){
+            lj_stu = lj_obj;
+            lj_order = lj_keys.slice();
+            for(var lj_rk in lj_rows){
+                lj_rows[lj_rk].classList.add("lj_row_out");
+                (function(lj_e){
+                    setTimeout(function(){ if(lj_e.parentNode){ lj_e.parentNode.removeChild(lj_e); } }, 340);
+                })(lj_rows[lj_rk]);
+            }
+            lj_rows = {};
+            lj_render();
+        }
+
+        /* ================= 各操作演示 ================= */
+        var lj_act = {
+            /* ---------- 一、创建 ---------- */
+            createLit: function(){
+                lj_reset();
+                return {
+                    code: '// 字面量写法（最常用）\nvar lj_stu = {\n    name: "李佳",\n    age: 20,\n    gender: "男",\n    hobby: "网页设计",\n    address: { city: "长沙", district: "岳麓区" }   // 嵌套对象\n};',
+                    desc: '<b>字面量 { }</b> 是创建对象最常用的方式：花括号里一条条写"属性名 : 属性值"，用逗号隔开。属性值可以是任意类型 —— 数字、字符串，甚至<b>再套一层花括号</b>（嵌套对象）。',
+                    ret: '档案卡已重置：5 个属性（其中 address 是嵌套对象）',
+                    change: false
+                };
+            },
+            createNew: function(){
+                lj_setObj({name: "李佳", age: 20}, ["name", "age"]);
+                lj_flashRow("name", "lj_hit", 900);
+                lj_flashRow("age", "lj_hit", 900);
+                return {
+                    code: 'var lj_stu = new Object();   // 创建空对象，等价于 {}\nlj_stu.name = "李佳";       // 再一个个把属性"填"进去\nlj_stu.age  = 20;',
+                    desc: '<b>new Object()</b> 先造一张空白卡片，再用 <b>obj.属性 = 值</b> 逐条填写。效果与字面量 {} 完全一样，但写法啰嗦，实际开发中更常用字面量。',
+                    ret: '创建了只含 name、age 两个属性的档案卡',
+                    change: false
+                };
+            },
+            createFn: function(){
+                function lj_Student(lj_n, lj_a){
+                    this.name = lj_n;
+                    this.age = lj_a;
+                    this.sayHi = function(){ return "我是" + this.name; };
+                }
+                var lj_s = new lj_Student("李佳", 20);
+                lj_setObj(lj_s, ["name", "age", "sayHi"]);
+                lj_flashRow("sayHi", "lj_hit", 1200);
+                return {
+                    code: '// 构造函数：一张"制卡模板"，new 一次造一张卡\nfunction Student(name, age){\n    this.name = name;\n    this.age = age;\n    this.sayHi = function(){ return "我是" + this.name; };\n}\nvar lj_stu = new Student("李佳", 20);',
+                    desc: '<b>构造函数</b>像"制卡机"：函数里的 <b>this</b> 指向正在创建的新对象，用 <b>new</b> 一调用就"印刷"出一张新卡。要批量创建结构相同的学生对象时用它最合适。',
+                    ret: 'new Student("李佳", 20) 造出的卡片：name、age、sayHi（方法）',
+                    change: false
+                };
+            },
+
+            /* ---------- 二、访问 ---------- */
+            dot: function(){
+                if(!lj_order.length){ return lj_emptyWarn(); }
+                var lj_k = lj_key();
+                var lj_v = lj_stu[lj_k];
+                lj_flashRow(lj_k, "lj_hit", 1300);
+                return {
+                    code: '// 点语法：像喊卡片上"栏目的名字"\nlj_stu.' + lj_k + ';\n// 返回值 → ' + lj_fmt(lj_v),
+                    desc: '<b>点语法 obj.key</b> 是最直观的属性访问方式。注意属性名必须是<b>合法标识符</b>（不能以数字开头、不能带空格）；访问不存在的属性会得到 <b>undefined</b>，不会报错。',
+                    ret: 'lj_stu.' + lj_k + ' = ' + lj_fmt(lj_v),
+                    change: false
+                };
+            },
+            bracket: function(){
+                if(!lj_order.length){ return lj_emptyWarn(); }
+                var lj_k = lj_key();
+                var lj_v = lj_stu[lj_k];
+                lj_flashRow(lj_k, "lj_hit", 1300);
+                return {
+                    code: '// 方括号语法：里面是"字符串"，也可以是变量\nlj_stu["' + lj_k + '"];        // 返回值 → ' + lj_fmt(lj_v) + '\n\nvar lj_k = "' + lj_k + '";\nlj_stu[lj_k];                // 用变量动态访问，结果相同',
+                    desc: '<b>方括号 obj["key"]</b> 更灵活：属性名写成<b>字符串</b>，所以能访问带空格、以数字开头的属性；更妙的是括号里可以放<b>变量</b>，实现"程序运行时才知道要取哪个属性"的动态访问。',
+                    ret: 'lj_stu["' + lj_k + '"] = ' + lj_fmt(lj_v),
+                    change: false
+                };
+            },
+            nested: function(){
+                if(!lj_order.length){ return lj_emptyWarn(); }
+                var lj_v = (lj_stu.address && typeof lj_stu.address === "object") ? lj_stu.address.city : undefined;
+                lj_flashRow("address", "lj_hit", 1300);
+                return {
+                    code: '// 链式访问：一层层往里"拆包"\nlj_stu.address.city;\n// 先取到 address 这张"小卡"，再取它上面的 city\n// 返回值 → ' + lj_fmt(lj_v),
+                    desc: '<b>嵌套对象</b>就像卡片上贴着一张小卡。访问时用<b>点号一路连下去</b>：obj.address.city。如果中间某一层不存在（undefined）再往下点会报错，所以链式访问前最好先判断。',
+                    ret: 'lj_stu.address.city = ' + lj_fmt(lj_v) + (lj_v === undefined ? '<br>（address 属性已被删除，返回 undefined）' : ''),
+                    change: false
+                };
+            },
+
+            /* ---------- 三、增删改 ---------- */
+            set: function(){
+                var lj_k = lj_key();
+                var lj_v = lj_val();
+                var lj_existed = Object.prototype.hasOwnProperty.call(lj_stu, lj_k);
+                lj_stu[lj_k] = lj_v;
+                if(lj_order.indexOf(lj_k) === -1){ lj_order.push(lj_k); }
+                lj_render();
+                lj_flashRow(lj_k, "lj_hit", 1400);
+                return {
+                    code: '// 对象的属性天生"可增可改"：直接赋值即可\nlj_stu.' + lj_k + ' = ' + lj_fmt(lj_v) + ';\n// ' + (lj_existed ? '原来就有 → 修改' : '原来没有 → 新增一条栏目'),
+                    desc: '给不存在的属性赋值就是<b>添加</b>，给已存在的属性赋值就是<b>修改</b> —— 同一句代码，看属性原本在不在。这比数组灵活得多：数组可不能随手"冒出"一个下标。',
+                    ret: (lj_existed
+                            ? '属性「' + lj_k + '」被<b>修改</b>为 ' + lj_fmt(lj_v)
+                            : '新属性「' + lj_k + '」已<b>添加</b>到卡片，值为 ' + lj_fmt(lj_v)),
+                    change: true
+                };
+            },
+            del: function(){
+                var lj_k = lj_key();
+                var lj_existed = Object.prototype.hasOwnProperty.call(lj_stu, lj_k);
+                var lj_v = lj_stu[lj_k];
+                if(lj_existed){
+                    delete lj_stu[lj_k];
+                    var lj_idx = lj_order.indexOf(lj_k);
+                    if(lj_idx > -1){ lj_order.splice(lj_idx, 1); }
+                    lj_render();
+                }
+                return {
+                    code: '// delete 只删"属性"本身，不会报错\ndelete lj_stu.' + lj_k + ';\n// 返回值 → true；再访问 lj_stu.' + lj_k + ' 得到 undefined',
+                    desc: '<b>delete</b> 把卡片上的整条栏目撕下来：属性和值一起消失，之后访问该属性得到 undefined。注意：它删的是<b>自有属性</b>，删不掉数组元素（数组请用 splice）。',
+                    ret: lj_existed
+                        ? '已删除「' + lj_k + '」，原值是 ' + lj_fmt(lj_v)
+                        : '「' + lj_k + '」本来就不存在，对象没有变化',
+                    change: lj_existed
+                };
+            },
+
+            /* ---------- 四、遍历 ---------- */
+            forin: function(){
+                if(!lj_order.length){ return lj_emptyWarn(); }
+                var lj_lines = [];
+                var lj_n = 0;
+                for(var lj_i = 0; lj_i < lj_order.length; lj_i++){
+                    (function(lj_k, lj_delay){
+                        setTimeout(function(){
+                            lj_flashRow(lj_k, "lj_hit", 480);
+                            lj_console(lj_k + " : " + lj_fmt(lj_stu[lj_k]));
+                        }, lj_delay);
+                    })(lj_order[lj_i], lj_n * 260);
+                    lj_n++;
+                    lj_lines.push(lj_order[lj_i] + " : " + lj_fmt(lj_stu[lj_order[lj_i]]));
+                }
+                return {
+                    code: '// for...in 依次取出每个"属性名"\nfor(var lj_k in lj_stu){\n    console.log(lj_k, lj_stu[lj_k]);   // 用方括号取值，不能写 lj_stu.lj_k\n}',
+                    desc: '<b>for...in</b> 是对象的 for 循环：循环变量得到的是<b>属性名字符串</b>，取值必须写 <b>lj_stu[lj_k]</b>（方括号），写成 lj_stu.lj_k 会去找名叫 "lj_k" 的属性。对象没有下标，所以数组那种 for (var i = 0; …) 用不上。',
+                    ret: '遍历结果（卡片会逐行点亮）：<br>' + lj_lines.join("<br>"),
+                    change: false
+                };
+            },
+            keys: function(){
+                if(!lj_order.length){ return lj_emptyWarn(); }
+                var lj_ks = Object.keys(lj_stu);
+                return {
+                    code: 'Object.keys(lj_stu);\n// 返回值 → [' + lj_ks.map(function(lj_x){ return '"' + lj_x + '"'; }).join(", ") + ']',
+                    desc: '<b>Object.keys()</b> 把所有<b>属性名</b>收集成一个数组返回。拿到数组之后，就可以用 forEach、map、filter 这些数组方法来处理对象 —— 这是 ES5 之后遍历对象最常用的姿势。',
+                    ret: '属性名数组：' + lj_chips(lj_ks),
+                    change: false
+                };
+            },
+            values: function(){
+                if(!lj_order.length){ return lj_emptyWarn(); }
+                var lj_vs = Object.values(lj_stu).map(function(lj_x){ return lj_fmt(lj_x); });
+                return {
+                    code: 'Object.values(lj_stu);\n// 返回值 → [' + lj_vs.join(", ") + ']',
+                    desc: '<b>Object.values()</b> 与 keys 相对，把所有<b>属性值</b>收集成数组。只要值不要名的时候用它。',
+                    ret: '属性值数组：' + lj_chips(lj_vs),
+                    change: false
+                };
+            },
+            entries: function(){
+                if(!lj_order.length){ return lj_emptyWarn(); }
+                var lj_es = Object.entries(lj_stu).map(function(lj_e){ return lj_e[0] + " : " + lj_fmt(lj_e[1]); });
+                return {
+                    code: 'Object.entries(lj_stu);\n// 返回值 → [["name","李佳"], ["age",20], …]\n// 每一项都是 [属性名, 属性值] 的小数组',
+                    desc: '<b>Object.entries()</b> 把每个属性变成 <b>[名, 值]</b> 的小数组，名和值一次全拿到。常配合 for...of 或 map 把对象转成想要的结构。',
+                    ret: '键值对数组：<br>' + lj_chips(lj_es),
+                    change: false
+                };
+            },
+
+            /* ---------- 五、判断 ---------- */
+            inOp: function(){
+                var lj_k = lj_key();
+                var lj_ok = lj_k in lj_stu;
+                if(lj_ok){ lj_flashRow(lj_k, "lj_hit", 1300); }
+                return {
+                    code: '"' + lj_k + '" in lj_stu;\n// 返回值 → ' + lj_ok,
+                    desc: '<b>in 运算符</b>检查属性是否存在，返回 true / false。注意它检查的是<b>整条继承链</b>：哪怕属性定义在原型上（比如 toString），in 也会返回 true。',
+                    ret: '「' + lj_k + '」' + (lj_ok ? '存在' : '不存在') + ' → ' + lj_ok,
+                    change: false
+                };
+            },
+            hasOwn: function(){
+                var lj_k = lj_key();
+                var lj_ok = Object.prototype.hasOwnProperty.call(lj_stu, lj_k);
+                if(lj_ok){ lj_flashRow(lj_k, "lj_hit", 1300); }
+                return {
+                    code: 'lj_stu.hasOwnProperty("' + lj_k + '");\n// 返回值 → ' + lj_ok + '\n\n// in 只要在"链条上"就算；\n// hasOwnProperty 只认卡片上自己写的属性',
+                    desc: '<b>hasOwnProperty()</b> 只检查<b>对象自己身上</b>的属性，不沿原型链向上找。想严格判断"这张卡自己有没有这个栏目"，用它比 in 更精确。',
+                    ret: '「' + lj_k + '」' + (lj_ok ? '是自己的属性' : '不是自己的属性') + ' → ' + lj_ok,
+                    change: false
+                };
+            },
+
+            /* ---------- 六、方法 / JSON / 引用 ---------- */
+            method: function(){
+                lj_stu.sayHi = function(){
+                    return "大家好，我是" + this.name + "，今年" + this.age + "岁，爱好" + this.hobby;
+                };
+                if(lj_order.indexOf("sayHi") === -1){ lj_order.push("sayHi"); }
+                lj_render();
+                var lj_msg = lj_stu.sayHi();
+                lj_flashRow("sayHi", "lj_hit", 1600);
+                setTimeout(function(){ lj_flashRow("name", "lj_hit", 500); }, 300);
+                setTimeout(function(){ lj_flashRow("age", "lj_hit", 500); }, 650);
+                setTimeout(function(){ lj_flashRow("hobby", "lj_hit", 500); }, 1000);
+                return {
+                    code: '// 属性值是函数时，它就是"方法"\nlj_stu.sayHi = function(){\n    return "大家好，我是" + this.name + "，今年" + this.age + "岁，爱好" + this.hobby;\n};\nlj_stu.sayHi();   // 调用时要带括号\n// 返回值 → "' + lj_esc(lj_msg).replace(/"/g, "") + '"',
+                    desc: '属性值是函数时称为<b>方法</b>，调用要<b>带括号</b> lj_stu.sayHi()。方法里的 <b>this</b> 指向"发出调用的那个对象"，也就是这张卡自己，所以 this.name 能拿到卡上的姓名。这也是 this 最常见的用法。',
+                    ret: 'sayHi() 说话了：<b>“' + lj_esc(lj_msg).replace(/"/g, "") + '”</b><br>（this.name、this.age、this.hobby 都是从这张卡上取的）',
+                    change: true
+                };
+            },
+            json: function(){
+                var lj_str = JSON.stringify(lj_stu, null, 2);
+                var lj_back = JSON.parse(lj_str);
+                return {
+                    code: '// 对象 → JSON 字符串（存储 / 传输用）\nvar lj_str = JSON.stringify(lj_stu, null, 2);\n\n// JSON 字符串 → 对象（还原回来用）\nvar lj_back = JSON.parse(lj_str);',
+                    desc: '对象没法直接发送或存进文件，要先 <b>JSON.stringify()</b> 变成字符串；收到的字符串再用 <b>JSON.parse()</b> 还原成对象。注意 JSON 里属性名<b>必须带双引号</b>，而且方法（函数）会被丢掉。',
+                    ret: 'JSON.stringify 结果（绿色字符串）：<pre class="lj_json">' + lj_esc(lj_str) + '</pre>parse 回来的对象属性数：' + Object.keys(lj_back).length + '（方法 sayHi 丢了）',
+                    change: false
+                };
+            },
+            ref: function(){
+                var lj_hadAge = Object.prototype.hasOwnProperty.call(lj_stu, "age");
+                var lj_oldAge = lj_stu.age;
+                var lj_b = lj_stu;      // 复制的是"地址"
+                lj_b.age = 99;
+                lj_render();
+                lj_flashRow("age", "lj_bad", 1500);
+                setTimeout(function(){
+                    if(lj_hadAge){ lj_stu.age = lj_oldAge; }
+                    else{
+                        delete lj_stu.age;
+                        var lj_i = lj_order.indexOf("age");
+                        if(lj_i > -1){ lj_order.splice(lj_i, 1); }
+                    }
+                    lj_render();
+                    lj_flashRow("age", "lj_hit", 700);
+                }, 1600);
+                return {
+                    code: 'var lj_b = lj_stu;    // 复制的不是卡，是"卡的地址"\nlj_b.age = 99;\nlj_stu.age;           // → 99 ！原对象也被改了\n\n// 真想复制一张新卡：\nvar lj_copy = Object.assign({}, lj_stu);   // 或 { ...lj_stu }',
+                    desc: '<b>对象是引用类型</b>：变量里存的不是卡片本身，而是"卡片放在哪个抽屉"的<b>地址</b>。lj_b = lj_stu 只是多了一个指向同一张卡的名字，改 lj_b 就是改 lj_stu。这与字符串、数字等基本类型"复制值"的行为完全不同。',
+                    ret: 'lj_b.age = 99 后，lj_stu.age 也变成了 <b>99</b>（红色闪烁）—— 同一张卡！<br>1.5 秒后自动恢复原值。真正的复制要用 Object.assign() 或展开运算符 { ...obj }',
+                    change: false
+                };
+            }
+        };
+
+        /* ================= 小工具 ================= */
+        function lj_chips(lj_arr){
+            var lj_h = "";
+            for(var lj_i = 0; lj_i < lj_arr.length; lj_i++){
+                lj_h += '<span class="lj_chip">' + lj_esc(lj_arr[lj_i]) + '</span>';
+            }
+            return lj_h ? lj_h : '<span class="lj_chip">（空）</span>';
+        }
+
+        /* ================= 速查表 ================= */
+        var lj_table = [
+            ["obj.key", "点语法访问属性", "lj_stu.name → \"李佳\""],
+            ["obj[\"key\"]", "方括号访问（可用变量）", "lj_stu[\"age\"] → 20"],
+            ["obj.key = v", "添加 / 修改属性", "lj_stu.age = 21"],
+            ["delete obj.key", "删除属性", "delete lj_stu.hobby"],
+            ["for...in", "遍历所有属性名", "for(var k in lj_stu){…}"],
+            ["Object.keys()", "属性名 → 数组", "[\"name\",\"age\",…]"],
+            ["Object.values()", "属性值 → 数组", "[\"李佳\",20,…]"],
+            ["Object.entries()", "键值对 → 二维数组", "[[\"name\",\"李佳\"],…]"],
+            ["\"key\" in obj", "判断属性（含原型链）", "\"age\" in lj_stu"],
+            ["obj.hasOwnProperty(k)", "判断自有属性", "lj_stu.hasOwnProperty(\"age\")"],
+            ["obj.fn()", "调用方法（this 指对象）", "lj_stu.sayHi()"],
+            ["JSON.stringify(obj)", "对象 → JSON 字符串", "{\"name\":\"李佳\"}"],
+            ["JSON.parse(str)", "JSON 字符串 → 对象", "还原成对象"],
+            ["Object.assign({}, obj)", "复制对象（引用类型的坑）", "{ ...obj } 同理"]
+        ];
+        (function lj_buildTable(){
+            var lj_html = "";
+            for(var lj_i = 0; lj_i < lj_table.length; lj_i++){
+                var lj_r = lj_table[lj_i];
+                lj_html += "<tr><td>" + lj_esc(lj_r[0]) + "</td><td>" + lj_r[1] + "</td><td>" + lj_esc(lj_r[2]) + "</td></tr>";
+            }
+            document.getElementById("lj_tb_body").innerHTML = lj_html;
+        })();
+
+        /* ================= 事件绑定 ================= */
+        var lj_btns = document.querySelectorAll(".lj_mbtn");
+        for(var lj_b = 0; lj_b < lj_btns.length; lj_b++){
+            lj_btns[lj_b].onclick = function(){
+                var lj_name = this.getAttribute("data-lj");
+                var lj_res = lj_act[lj_name]();
+                lj_show(lj_res);
+                lj_console("执行 " + lj_name + "()");
+            };
+        }
+        document.getElementById("lj_reset_btn").onclick = function(){
+            lj_reset();
+            lj_console("重置档案卡：name / age / gender / hobby / address");
+            document.getElementById("lj_code").textContent = "lj_stu = { name:\"李佳\", age:20, gender:\"男\", hobby:\"网页设计\", address:{…} };";
+            document.getElementById("lj_desc").innerHTML = "档案卡已还原成 5 个属性。改一下上面的<b>属性名 / 属性值</b>输入框，再点方法按钮试试不同的操作。";
+            document.getElementById("lj_ret").innerHTML = "当前共 " + lj_order.length + " 个属性";
+        };
+
+        /* ================= 初始化 ================= */
+        lj_reset();
+        lj_console("页面就绪：lj_stu 有 5 个属性");
+    </script>
+</body>
+</html>
