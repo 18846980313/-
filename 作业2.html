@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-11-01，大模型：GLM-5.3，功能：模仿"即时新闻精选"时间线新闻列表组件 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>即时新闻精选 - 组件模仿</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #f0f1f5;
+            padding: 40px 20px;
+        }
+        .lj_container{
+            max-width: 560px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 26px 30px;
+            border-radius: 6px;
+        }
+        /* 头部：红竖条 + 标题 + 分页器 */
+        .lj_header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+        }
+        .lj_title_wrap{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .lj_bar{
+            width: 4px;
+            height: 22px;
+            background: #e02e2e;
+            border-radius: 2px;
+        }
+        .lj_title{
+            font-size: 20px;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+        .lj_pager{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #b0b0b0;
+            font-size: 14px;
+            user-select: none;
+        }
+        .lj_pager span{
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            width: 26px;
+            height: 26px;
+            background: #f0f1f5;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 时间线列表 */
+        .lj_list{
+            list-style: none;
+            position: relative;
+        }
+        /* 连接圆点的竖线 */
+        .lj_list::before{
+            content: "";
+            position: absolute;
+            left: 4px;
+            top: 18px;
+            bottom: 18px;
+            width: 1px;
+            background: #e8e8e8;
+        }
+        .lj_item{
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+        }
+        /* 空心红圆点 */
+        .lj_item::before{
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 9px;
+            height: 9px;
+            border: 2px solid #e02e2e;
+            border-radius: 50%;
+            background: #fff;
+            box-sizing: border-box;
+        }
+        .lj_headline{
+            padding-left: 22px;
+            font-size: 17px;
+            color: #1a1a1a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .lj_time{
+            flex-shrink: 0;
+            margin-left: 12px;
+            color: #9a9a9a;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <div class="lj_header">
+            <div class="lj_title_wrap">
+                <div class="lj_bar"></div>
+                <div class="lj_title">即时新闻精选</div>
+            </div>
+            <div class="lj_pager">
+                <span>‹</span>
+                <em id="lj_page_num" style="font-style:normal;">1/5</em>
+                <span>›</span>
+            </div>
+        </div>
+        <ul class="lj_list">
+            <li class="lj_item">
+                <div class="lj_headline">国防部批日剧《VIVANT》颠倒黑白：历史不...</div>
+                <div class="lj_time">19:14</div>
+            </li>
+            <li class="lj_item">
+                <div class="lj_headline">走过百年，马华文学为何仍有生命力？</div>
+                <div class="lj_time">19:07</div>
+            </li>
+            <li class="lj_item">
+                <div class="lj_headline">中国驻俄罗斯大使馆提醒：切勿在俄非法采...</div>
+                <div class="lj_time">18:44</div>
+            </li>
+            <li class="lj_item">
+                <div class="lj_headline">10月中国百城新房价格继续上涨 二手房下...</div>
+                <div class="lj_time">18:33</div>
+            </li>
+        </ul>
+    </div>
+    <script>
+        // 分页器演示：点击箭头切换页码
+        var lj_page = 1;
+        var lj_total = 5;
+        var lj_pageNum = document.getElementById("lj_page_num");
+        document.querySelector(".lj_pager span:first-child").onclick = function(){
+            if(lj_page > 1){
+                lj_page--;
+                lj_pageNum.innerHTML = lj_page + "/" + lj_total;
+            }
+        };
+        document.querySelector(".lj_pager span:last-child").onclick = function(){
+            if(lj_page < lj_total){
+                lj_page++;
+                lj_pageNum.innerHTML = lj_page + "/" + lj_total;
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-11-01，大模型：GLM-5.3，功能：模仿反腐败斗争专题模块（横幅+新闻列表） -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>将反腐败斗争进行到底 - 专题模仿</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #f0f1f5;
+            padding: 40px 20px;
+        }
+        .lj_container{
+            max-width: 640px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        /* 专题横幅：原图横幅 + 底部标语条 */
+        .lj_banner{
+            position: relative;
+        }
+        .lj_banner img{
+            width: 100%;
+            display: block;
+        }
+        /* 底部半透明黑条 */
+        .lj_overlay{
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 46px;
+            background: rgba(0, 0, 0, .5);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 16px;
+        }
+        .lj_overlay_text{
+            color: #fff;
+            font-size: 19px;
+            letter-spacing: 3px;
+        }
+        /* 新闻列表 */
+        .lj_list{
+            list-style: none;
+            padding: 8px 30px 20px;
+        }
+        .lj_list li{
+            position: relative;
+            padding-left: 20px;
+            margin: 16px 0;
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .lj_list li::before{
+            content: "";
+            position: absolute;
+            left: 2px;
+            top: 9px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #b8b8b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <div class="lj_banner">
+            <img src="abd73470-0662-46af-b873-4ab79da560f9_big.jpg" alt="将反腐败斗争进行到底">
+            <div class="lj_overlay">
+                <div class="lj_overlay_text">将反腐败斗争进行到底</div>
+            </div>
+        </div>
+        <ul class="lj_list">
+            <li>习言道 | 治国必先治党，强国必先强党</li>
+            <li>习言道 | 近5000字公报，"严"字贯穿始终</li>
+            <li>永远保持赶考的清醒和谨慎，驰而不息推进全面从严治党</li>
+        </ul>
+    </div>
+</body>
+</html>

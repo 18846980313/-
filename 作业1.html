@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-11-01，大模型：GLM-5.3，功能：模仿新闻网站"社会"版块（焦点新闻+列表） -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社会 - 新闻版块模仿</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #fff;
+            padding-top: 22px;
+        }
+        .lj_container{
+            max-width: 646px;
+            margin: 0 auto;
+            padding: 0 14px;
+        }
+        /* 标题行：红色"社会" + 灰色点线（原图实测：字号34px，点线垂直居中，下方无分隔线） */
+        .lj_header_row{
+            display: flex;
+            align-items: center;
+        }
+        .lj_header{
+            font-size: 34px;
+            font-weight: bold;
+            color: #d02a2a;
+            margin-right: 24px;
+        }
+        .lj_bar{
+            flex: 1;
+            height: 10px;
+            background: #e4e4e4;
+            border-radius: 5px;
+        }
+        /* 焦点新闻：图片338px与灰底标题块紧贴（原图实测：图片338×225，灰块#f6f6f6通高） */
+        .lj_feature{
+            display: flex;
+            margin-top: 26px;
+        }
+        .lj_feature img{
+            width: 338px;
+            height: 225px;
+            object-fit: cover;
+            border-radius: 3px;
+            flex-shrink: 0;
+            display: block;
+        }
+        .lj_feature h3{
+            flex: 1;
+            background: #f6f6f6;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            line-height: 1.85;
+            color: #333;
+            font-weight: bold;
+        }
+        /* 新闻列表（原图实测：字号16px，行距60px，灰圆点） */
+        .lj_list{
+            list-style: none;
+            margin-top: 32px;
+        }
+        .lj_list li{
+            position: relative;
+            padding-left: 26px;
+            margin: 19px 0;
+            font-size: 18px;
+            color: #333;
+            line-height: 1.4;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .lj_list li::before{
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #b8b8b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <div class="lj_header_row">
+            <div class="lj_header">社会</div>
+            <div class="lj_bar"></div>
+        </div>
+        <div class="lj_feature">
+            <img src="呼中雾松.png" alt="呼中雾凇美景">
+            <h3>“中国最冷小镇” 呼中降至-28℃ 雾凇美景惹人醉</h3>
+        </div>
+        <ul class="lj_list">
+            <li>黄河岸边的异国忠魂</li>
+            <li>温馨提示！11月有这些考试，别错过→</li>
+            <li>长江沿线13个重点村携手发力乡村文旅谋共富</li>
+            <li>（走进中国乡村）兰州百合一瓣清甜 “花式”共享养...</li>
+        </ul>
+    </div>
+</body>
+</html>
