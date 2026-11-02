@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-11-01，大模型：GLM-5.3，功能：模仿B站风格移动端底部导航栏（图标+文字+中央+按钮，可点击切换） -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>底部导航栏模仿 - 作业4</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #e8eaee;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 12px;
+        }
+        /* 手机外壳 */
+        .lj_phone{
+            width: 375px;
+            height: 760px;
+            max-height: calc(100vh - 48px);
+            background: #fff;
+            border: 10px solid #17181a;
+            border-radius: 46px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, .25);
+            display: flex;
+            flex-direction: column;
+        }
+        /* 状态栏 */
+        .lj_status_bar{
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #17181a;
+        }
+        .lj_status_icons{
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        /* 屏幕内容区 */
+        .lj_screen{
+            flex: 1;
+            background: #f6f7f8;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        /* 演示内容区 */
+        .lj_demo{
+            padding: 0 28px;
+            text-align: center;
+        }
+        .lj_demo h1{
+            font-size: 22px;
+            color: #18191c;
+            margin-bottom: 12px;
+        }
+        .lj_demo p{
+            font-size: 14px;
+            color: #9499a0;
+            line-height: 1.8;
+        }
+        .lj_logo_row{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            color: #f8679e;
+        }
+        .lj_logo_row svg{
+            width: 40px;
+            height: 40px;
+        }
+        /* 底部导航栏 */
+        .lj_tabbar{
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            display: flex;
+            align-items: stretch;
+            padding: 0 8px;
+            box-shadow: 0 -1px 4px rgba(0, 0, 0, .04);
+        }
+        .lj_tab{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 0;
+            color: #6e6e71;
+            cursor: pointer;
+            user-select: none;
+        }
+        .lj_tab svg{
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
+        .lj_tab .lj_label{
+            font-size: 10px;
+            line-height: 1;
+        }
+        /* 激活态：粉色（原图实测 #f866a1） */
+        .lj_tab.lj_active{
+            color: #f8679e;
+        }
+        /* 中央 + 按钮 */
+        .lj_plus_wrap{
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .lj_plus{
+            width: 44px;
+            height: 44px;
+            background: #f8679e;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(248, 103, 158, .35);
+            transition: transform .2s;
+        }
+        .lj_plus:active{
+            transform: scale(.88);
+        }
+        .lj_plus svg{
+            width: 24px;
+            height: 24px;
+            display: block;
+        }
+        /* 点击 + 的旋转动画 */
+        .lj_plus.lj_spin{
+            animation: lj_rotate .4s ease;
+        }
+        @keyframes lj_rotate{
+            from{ transform: rotate(0deg); }
+            to{ transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_phone">
+        <!-- 状态栏 -->
+        <div class="lj_status_bar">
+            <span>9:41</span>
+            <div class="lj_status_icons">
+                <svg width="17" height="11" viewBox="0 0 17 11" fill="#17181a">
+                    <rect x="0" y="7" width="3" height="4" rx="0.5"/>
+                    <rect x="4.5" y="5" width="3" height="6" rx="0.5"/>
+                    <rect x="9" y="2.5" width="3" height="8.5" rx="0.5"/>
+                    <rect x="13.5" y="0" width="3" height="11" rx="0.5"/>
+                </svg>
+                <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="#17181a" stroke-width="1.6" stroke-linecap="round">
+                    <path d="M1.5 4 A9.5 9.5 0 0 1 14.5 4"/>
+                    <path d="M4.3 7 A5.5 5.5 0 0 1 11.7 7"/>
+                    <circle cx="8" cy="9.6" r="1.1" fill="#17181a" stroke="none"/>
+                </svg>
+                <svg width="25" height="12" viewBox="0 0 25 12">
+                    <rect x="0.5" y="0.5" width="21" height="11" rx="2.5" fill="none" stroke="#17181a" opacity=".4"/>
+                    <rect x="2" y="2" width="15" height="8" rx="1.2" fill="#17181a"/>
+                    <path d="M23.5 4 V8" stroke="#17181a" stroke-width="1.6" stroke-linecap="round" opacity=".4"/>
+                </svg>
+            </div>
+        </div>
+        <!-- 屏幕内容 -->
+        <div class="lj_screen">
+    <div class="lj_demo">
+        <div class="lj_logo_row">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 6 L4 14 M38 6 L44 14 M8 14 H40"/>
+                <rect x="8" y="14" width="32" height="24" rx="7"/>
+                <path d="M18 24 v5 M30 24 v5 M19 32 q5 4 10 0"/>
+            </svg>
+            <h1>底部导航栏模仿</h1>
+        </div>
+        <p>仿 B 站客户端底部标签栏：首页 · 关注 · 会员购 · 我的<br>点击下方标签可切换选中态，点击中央 + 号有动画</p>
+    </div>
+        </div>
+
+    <nav class="lj_tabbar">
+        <!-- 首页：带笑脸的房子 -->
+        <div class="lj_tab lj_active" id="lj_tab_home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 10.5 L12 4 L20 10.5"/>
+                <path d="M5.5 9.5 V20 H18.5 V9.5"/>
+                <path d="M9 15.5 q3 2.4 6 0"/>
+            </svg>
+            <span class="lj_label">首页</span>
+        </div>
+        <!-- 关注：风车 -->
+        <div class="lj_tab" id="lj_tab_follow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <g>
+                    <ellipse cx="12" cy="6.8" rx="2" ry="3.4" transform="rotate(20 12 12)"/>
+                    <ellipse cx="12" cy="6.8" rx="2" ry="3.4" transform="rotate(140 12 12)"/>
+                    <ellipse cx="12" cy="6.8" rx="2" ry="3.4" transform="rotate(260 12 12)"/>
+                </g>
+            </svg>
+            <span class="lj_label">关注</span>
+        </div>
+        <!-- 中央 + 按钮 -->
+        <div class="lj_plus_wrap">
+            <div class="lj_plus" id="lj_plus">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round">
+                    <path d="M12 5 V19 M5 12 H19"/>
+                </svg>
+            </div>
+        </div>
+        <!-- 会员购：购物袋 -->
+        <div class="lj_tab" id="lj_tab_mall">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.5 9 V7.5 a2.5 2.5 0 0 1 5 0 V9"/>
+                <path d="M6.5 9 H17.5 L16.6 20 H7.4 Z"/>
+                <text x="12" y="16.8" text-anchor="middle" font-size="7" fill="currentColor" stroke="none" font-family="Microsoft YaHei, sans-serif">购</text>
+            </svg>
+            <span class="lj_label">会员购</span>
+        </div>
+        <!-- 我的：小电视 -->
+        <div class="lj_tab" id="lj_tab_me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8.5 7 L6.5 3.5 M15.5 7 L17.5 3.5"/>
+                <rect x="4" y="7" width="16" height="13" rx="2.5"/>
+                <path d="M9 12.5 v1.6 M15 12.5 v1.6"/>
+                <path d="M9.5 17 q2.5 2 5 0"/>
+            </svg>
+            <span class="lj_label">我的</span>
+        </div>
+    </nav>
+    </div>
+
+    <script>
+        // 标签切换：点击哪个哪个变粉，其余保持灰色
+        var lj_tabs = document.querySelectorAll(".lj_tab");
+        for(var lj_i = 0; lj_i < lj_tabs.length; lj_i++){
+            lj_tabs[lj_i].onclick = function(){
+                for(var lj_j = 0; lj_j < lj_tabs.length; lj_j++){
+                    lj_tabs[lj_j].classList.remove("lj_active");
+                }
+                this.classList.add("lj_active");
+            };
+        }
+        // 中央 + 按钮：旋转动画
+        var lj_plus = document.getElementById("lj_plus");
+        lj_plus.onclick = function(){
+            lj_plus.classList.remove("lj_spin");
+            // 强制重绘以重放动画
+            void lj_plus.offsetWidth;
+            lj_plus.classList.add("lj_spin");
+        };
+    </script>
+</body>
+</html>

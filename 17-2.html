@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-11-02，大模型：GLM-5.3，功能：获取接口数据并展示（GitHub API，XHR与fetch两种请求方式，带请求过程时间线和错误处理） -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>获取接口数据并展示</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .lj_container{
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px 20px 50px;
+        }
+        h1{
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .lj_sub{
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        h2{
+            font-size: 20px;
+            color: #2c3e50;
+            margin: 34px 0 14px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        /* 接口说明卡 */
+        .lj_api_info{
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+            font-size: 14px;
+        }
+        .lj_api_info table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .lj_api_info td{
+            padding: 7px 6px;
+            border-bottom: 1px dashed #e5e8ec;
+            vertical-align: top;
+        }
+        .lj_api_info tr:last-child td{
+            border-bottom: none;
+        }
+        .lj_api_info td:first-child{
+            width: 110px;
+            color: #888;
+            white-space: nowrap;
+        }
+        .lj_api_info code{
+            font-family: Consolas, monospace;
+            background: #f4f6f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #24292e;
+            word-break: break-all;
+        }
+        /* 演示区 */
+        .lj_demo{
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_btn_row{
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .lj_btn{
+            padding: 9px 22px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .lj_btn:hover{
+            background: #2e86c1;
+        }
+        .lj_btn.lj_green{
+            background: #27ae60;
+        }
+        .lj_btn.lj_green:hover{
+            background: #1f8b4d;
+        }
+        .lj_btn:disabled{
+            background: #b8c2ca;
+            cursor: not-allowed;
+        }
+        /* 请求过程时间线 */
+        .lj_steps{
+            margin: 16px 0;
+            font-size: 13px;
+        }
+        .lj_steps div{
+            padding: 4px 0 4px 22px;
+            position: relative;
+            color: #666;
+        }
+        .lj_steps div::before{
+            content: "●";
+            position: absolute;
+            left: 4px;
+            color: #3498db;
+            font-size: 10px;
+            top: 7px;
+        }
+        .lj_steps div span{
+            color: #aaa;
+            margin-left: 8px;
+            font-size: 12px;
+        }
+        /* 渲染的信息卡片 */
+        .lj_repo_card{
+            display: none;
+            border: 1px solid #e1e4e8;
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin: 14px 0;
+            background: #f8fafc;
+        }
+        .lj_repo_name{
+            font-size: 18px;
+            font-weight: bold;
+            color: #0366d6;
+            text-decoration: none;
+        }
+        .lj_repo_name:hover{
+            text-decoration: underline;
+        }
+        .lj_repo_desc{
+            font-size: 14px;
+            color: #586069;
+            margin: 6px 0 12px;
+        }
+        .lj_repo_stats{
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            font-size: 13px;
+            color: #586069;
+        }
+        .lj_repo_stats b{
+            color: #e67e22;
+        }
+        /* JSON 展示 */
+        pre{
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            background: #2d2d2d;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #eee;
+        }
+        .lj_key{ color: #7ec8ff; }
+        .lj_str{ color: #ffd479; }
+        .lj_num{ color: #f78c6c; }
+        .lj_bool{ color: #c792ea; }
+        .lj_err{
+            display: none;
+            color: #ff6b6b;
+            background: #fdecea;
+            border: 1px solid #f5b7b1;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+        /* 代码讲解 */
+        .lj_code_cards{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .lj_code_card{
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_code_card h3{
+            font-size: 15px;
+            margin-bottom: 10px;
+            color: #e67e22;
+        }
+        .lj_code_card h3 small{
+            color: #aaa;
+            font-weight: normal;
+            margin-left: 6px;
+        }
+        @media (max-width: 640px){
+            .lj_code_cards{
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <h1>获取接口数据并展示</h1>
+        <p class="lj_sub">调用 GitHub 公开接口，实时获取本项目仓库的真实数据</p>
+
+        <!-- 一、接口说明 -->
+        <h2>一、我们要调用的接口</h2>
+        <div class="lj_api_info">
+            <table>
+                <tr>
+                    <td>接口地址</td>
+                    <td><code>https://api.github.com/repos/18846980313/-</code></td>
+                </tr>
+                <tr>
+                    <td>请求方式</td>
+                    <td><code>GET</code>（获取数据）</td>
+                </tr>
+                <tr>
+                    <td>返回格式</td>
+                    <td><code>JSON</code>（就是 17-1 学过的那种数据格式）</td>
+                </tr>
+                <tr>
+                    <td>是否需要密钥</td>
+                    <td>不需要（公开接口）</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 二、请求演示 -->
+        <h2>二、发起请求，展示数据</h2>
+        <div class="lj_demo">
+            <div class="lj_btn_row">
+                <button class="lj_btn" id="lj_btn_xhr">方式一：XMLHttpRequest</button>
+                <button class="lj_btn lj_green" id="lj_btn_fetch">方式二：fetch</button>
+            </div>
+
+            <!-- 请求过程时间线 -->
+            <div class="lj_steps" id="lj_steps"></div>
+
+            <!-- 渲染结果卡片 -->
+            <div class="lj_repo_card" id="lj_repo_card">
+                <a class="lj_repo_name" id="lj_repo_name" href="#" target="_blank"></a>
+                <div class="lj_repo_desc" id="lj_repo_desc"></div>
+                <div class="lj_repo_stats">
+                    <span>星标 <b id="lj_repo_stars">0</b></span>
+                    <span>分支 <b id="lj_repo_forks">0</b></span>
+                    <span>语言 <b id="lj_repo_lang">-</b></span>
+                    <span>最近更新 <b id="lj_repo_time">-</b></span>
+                </div>
+            </div>
+
+            <!-- JSON 原文（节选常用字段） -->
+            <pre><code id="lj_json_out">// 接口返回的 JSON 数据将显示在这里（节选常用字段）</code></pre>
+            <div class="lj_err" id="lj_err_box"></div>
+        </div>
+
+        <!-- 三、代码讲解 -->
+        <h2>三、两种方式的代码对照</h2>
+        <div class="lj_code_cards">
+            <div class="lj_code_card">
+                <h3>XMLHttpRequest <small>传统四步走</small></h3>
+<pre>var lj_xhr = new XMLHttpRequest();  // 1.创建
+lj_xhr.open("GET", lj_url);          // 2.设置
+lj_xhr.send();                       // 3.发送
+lj_xhr.onreadystatechange = function(){ // 4.处理
+  if(lj_xhr.readyState === 4 &&
+     lj_xhr.status === 200){
+    var lj_data = JSON.parse(
+      lj_xhr.responseText);
+  }
+}</pre>
+            </div>
+            <div class="lj_code_card">
+                <h3>fetch <small>现代 Promise 写法</small></h3>
+<pre>fetch(lj_url)
+  .then(function(lj_res){
+    return lj_res.json(); // 解析JSON
+  })
+  .then(function(lj_data){
+    // 使用数据 lj_data
+  })
+  .catch(function(lj_e){
+    // 出错处理
+  })</pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var lj_url = "https://api.github.com/repos/18846980313/-";
+        var lj_steps = document.getElementById("lj_steps");
+        var lj_err_box = document.getElementById("lj_err_box");
+
+        // 记录请求过程的一步
+        function lj_log(lj_text){
+            var lj_row = document.createElement("div");
+            var lj_time = new Date();
+            var lj_t = lj_time.getMinutes() + ":" + lj_time.getSeconds() + "." + lj_time.getMilliseconds();
+            lj_row.innerHTML = lj_text + "<span>" + lj_t + "</span>";
+            lj_steps.appendChild(lj_row);
+        }
+
+        // JSON 语法高亮（17-1 学过的）
+        function lj_highlight(lj_str){
+            var lj_html = lj_str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            lj_html = lj_html.replace(/"([^"]*)"(\s*:)/g, '<span class="lj_key">"$1"</span>$2');
+            lj_html = lj_html.replace(/:\s*"([^"]*)"/g, ': <span class="lj_str">"$1"</span>');
+            lj_html = lj_html.replace(/\b(\d+\.?\d*)\b/g, '<span class="lj_num">$1</span>');
+            lj_html = lj_html.replace(/\b(true|false|null)\b/g, '<span class="lj_bool">$1</span>');
+            return lj_html;
+        }
+
+        // 拿到数据后：渲染卡片 + 展示 JSON 节选
+        function lj_show(lj_data){
+            // 卡片
+            document.getElementById("lj_repo_card").style.display = "block";
+            document.getElementById("lj_repo_name").textContent = lj_data.full_name;
+            document.getElementById("lj_repo_name").href = lj_data.html_url;
+            document.getElementById("lj_repo_desc").textContent = lj_data.description || "（这个仓库还没有写简介）";
+            document.getElementById("lj_repo_stars").textContent = lj_data.stargazers_count;
+            document.getElementById("lj_repo_forks").textContent = lj_data.forks_count;
+            document.getElementById("lj_repo_lang").textContent = lj_data.language || "HTML";
+            document.getElementById("lj_repo_time").textContent = new Date(lj_data.updated_at).toLocaleString("zh-CN");
+            // JSON 节选
+            var lj_pick = {
+                full_name: lj_data.full_name,
+                description: lj_data.description,
+                stargazers_count: lj_data.stargazers_count,
+                forks_count: lj_data.forks_count,
+                language: lj_data.language,
+                updated_at: lj_data.updated_at
+            };
+            document.getElementById("lj_json_out").innerHTML = lj_highlight(JSON.stringify(lj_pick, null, 2));
+        }
+
+        // 出错处理
+        function lj_fail(lj_msg){
+            document.getElementById("lj_json_out").textContent = "// 请求失败";
+            lj_err_box.textContent = "❌ " + lj_msg + " —— 请检查网络连接后重试";
+            lj_err_box.style.display = "block";
+        }
+
+        // 方式一：XMLHttpRequest
+        document.getElementById("lj_btn_xhr").onclick = function(){
+            lj_steps.innerHTML = "";
+            lj_err_box.style.display = "none";
+            var lj_xhr = new XMLHttpRequest();
+            lj_log("创建 XMLHttpRequest 对象");
+            lj_xhr.open("GET", lj_url);
+            lj_log("open：建立与接口的连接");
+            lj_xhr.send();
+            lj_log("send：请求已发出，等待响应…");
+            lj_xhr.onreadystatechange = function(){
+                if(lj_xhr.readyState === 4){
+                    if(lj_xhr.status === 200){
+                        lj_log("收到响应（状态码 200），JSON.parse 解析数据");
+                        lj_show(JSON.parse(lj_xhr.responseText));
+                    }else{
+                        lj_fail("请求完成但状态码是 " + lj_xhr.status);
+                    }
+                }
+            };
+        };
+
+        // 方式二：fetch
+        document.getElementById("lj_btn_fetch").onclick = function(){
+            lj_steps.innerHTML = "";
+            lj_err_box.style.display = "none";
+            lj_log("调用 fetch()，Promise 开始执行");
+            fetch(lj_url)
+                .then(function(lj_res){
+                    lj_log("收到响应（状态码 " + lj_res.status + "），res.json() 解析数据");
+                    return lj_res.json();
+                })
+                .then(function(lj_data){
+                    lj_show(lj_data);
+                })
+                .catch(function(lj_e){
+                    lj_fail("fetch 出错：" + lj_e.message);
+                });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-11-02，大模型：GLM-5.3，功能：展示JSON数据格式（六种值类型、与JS对象对比、stringify/parse交互演示、常见错误） -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON 展示</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .lj_container{
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px 20px 50px;
+        }
+        h1{
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .lj_sub{
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        h2{
+            font-size: 20px;
+            color: #2c3e50;
+            margin: 34px 0 14px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        /* 卡片区 */
+        .lj_cards{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 14px;
+        }
+        .lj_card{
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_card h3{
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: #e74c3c;
+        }
+        .lj_card p{
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 8px;
+        }
+        .lj_card code{
+            display: block;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            background: #2d2d2d;
+            color: #9fd6ff;
+            padding: 8px 10px;
+            border-radius: 6px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        /* 对比表 */
+        .lj_vs{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .lj_vs .lj_col{
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_col h3{
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        .lj_col .lj_js_h{
+            color: #e67e22;
+        }
+        .lj_col .lj_json_h{
+            color: #27ae60;
+        }
+        .lj_col pre{
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            background: #2d2d2d;
+            color: #eee;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.7;
+        }
+        /* 交互演示区 */
+        .lj_demo{
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_demo_btn{
+            display: inline-block;
+            padding: 8px 22px;
+            margin: 10px 0 14px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .lj_demo_btn:hover{
+            background: #2e86c1;
+        }
+        .lj_demo_btn.lj_green{
+            background: #27ae60;
+        }
+        .lj_demo_btn.lj_green:hover{
+            background: #1f8b4d;
+        }
+        .lj_demo pre{
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            background: #2d2d2d;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .lj_out{
+            color: #eee;
+            min-height: 20px;
+        }
+        textarea{
+            width: 100%;
+            height: 130px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            padding: 10px;
+            border: 2px solid #d5dbdf;
+            border-radius: 8px;
+            resize: vertical;
+            outline: none;
+        }
+        textarea:focus{
+            border-color: #3498db;
+        }
+        /* JSON 语法高亮 */
+        .lj_key{ color: #7ec8ff; }
+        .lj_str{ color: #ffd479; }
+        .lj_num{ color: #f78c6c; }
+        .lj_bool{ color: #c792ea; }
+        .lj_err{
+            color: #ff6b6b;
+            background: #fdecea;
+            border: 1px solid #f5b7b1;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+        /* 常见错误 */
+        .lj_err_list{
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_err_list li{
+            list-style: none;
+            padding: 8px 0 8px 26px;
+            position: relative;
+            font-size: 14px;
+            color: #555;
+        }
+        .lj_err_list li::before{
+            content: "✕";
+            position: absolute;
+            left: 0;
+            top: 8px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .lj_err_list code{
+            font-family: Consolas, monospace;
+            background: #f4f6f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #c0392b;
+        }
+        @media (max-width: 640px){
+            .lj_vs{
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <h1>JSON 展示</h1>
+        <p class="lj_sub">JSON（JavaScript Object Notation）—— 轻量级的数据交换格式，易于人阅读，也易于机器解析</p>
+
+        <!-- 一、六种值类型 -->
+        <h2>一、JSON 的六种值类型</h2>
+        <div class="lj_cards">
+            <div class="lj_card">
+                <h3>字符串 String</h3>
+                <p>必须用双引号包裹</p>
+                <code>"name": "李佳"</code>
+            </div>
+            <div class="lj_card">
+                <h3>数字 Number</h3>
+                <p>整数或小数，不加引号</p>
+                <code>"score": 95.5</code>
+            </div>
+            <div class="lj_card">
+                <h3>布尔 Boolean</h3>
+                <p>只有 true / false 两个值</p>
+                <code>"isMember": true</code>
+            </div>
+            <div class="lj_card">
+                <h3>空值 null</h3>
+                <p>表示"没有值"（注意不是 undefined）</p>
+                <code>"remark": null</code>
+            </div>
+            <div class="lj_card">
+                <h3>对象 Object</h3>
+                <p>花括号包裹的键值对集合</p>
+                <code>"score": { "web": 95 }</code>
+            </div>
+            <div class="lj_card">
+                <h3>数组 Array</h3>
+                <p>方括号包裹的有序列表</p>
+                <code>"courses": ["网页", "JS"]</code>
+            </div>
+        </div>
+
+        <!-- 二、JSON 与 JS 对象对比 -->
+        <h2>二、JSON 与 JS 对象的对比</h2>
+        <div class="lj_vs">
+            <div class="lj_col">
+                <h3 class="lj_js_h">JS 对象（写法灵活）</h3>
+<pre>var lj_stu = {
+    name: "李佳",          // 键可以不加引号
+    age: 20,
+    hello: function(){    // 可以有函数
+        return "hi";
+    },
+    score: undefined      // 可以有 undefined
+};</pre>
+            </div>
+            <div class="lj_col">
+                <h3 class="lj_json_h">JSON（格式严格）</h3>
+<pre>{
+    "name": "李佳",        // 键必须双引号
+    "age": 20,             // 值不能是函数
+    "score": null          // 不能出现 undefined
+}</pre>
+            </div>
+        </div>
+
+        <!-- 三、stringify 演示 -->
+        <h2>三、JSON.stringify —— 对象转字符串</h2>
+        <div class="lj_demo">
+            <button class="lj_demo_btn" id="lj_btn_stringify">执行 JSON.stringify()</button>
+            <pre><code class="lj_out" id="lj_out_stringify">// 点击按钮，把下面的 JS 对象序列化成 JSON 字符串</code></pre>
+        </div>
+
+        <!-- 四、parse 演示 -->
+        <h2>四、JSON.parse —— 字符串转对象（可编辑）</h2>
+        <div class="lj_demo">
+            <p style="font-size:13px;color:#888;">修改下面的 JSON 字符串，然后点击解析按钮：</p>
+            <textarea id="lj_json_input">{
+  "name": "李佳",
+  "studentId": "20240001",
+  "isMember": true,
+  "courses": ["高级网页设计", "JavaScript程序设计"],
+  "score": { "web": 95, "js": 92 }
+}</textarea><br>
+            <button class="lj_demo_btn lj_green" id="lj_btn_parse">执行 JSON.parse()</button>
+            <pre><code class="lj_out" id="lj_out_parse">// 解析结果将显示在这里（带语法高亮）</code></pre>
+            <div id="lj_parse_error" style="display:none;" class="lj_err"></div>
+        </div>
+
+        <!-- 五、常见错误 -->
+        <h2>五、JSON 的四个常见错误</h2>
+        <ul class="lj_err_list">
+            <li>键使用了单引号：<code>{ 'name': '李佳' }</code> —— 必须用双引号</li>
+            <li>最后一个键值对后面有逗号：<code>{ "a": 1, }</code> —— JSON 不允许尾逗号</li>
+            <li>JSON 里写注释：<code>{ // 注释 }</code> —— JSON 不支持注释</li>
+            <li>值里出现 undefined / function —— 只能是六种值类型之一</li>
+        </ul>
+    </div>
+
+    <script>
+        // JSON 语法高亮：给字符串/数字/布尔值着色
+        function lj_highlight(lj_str){
+            var lj_html = lj_str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            lj_html = lj_html.replace(/"([^"]*)"(\s*:)/g, '<span class="lj_key">"$1"</span>$2');
+            lj_html = lj_html.replace(/:\s*"([^"]*)"/g, ': <span class="lj_str">"$1"</span>');
+            lj_html = lj_html.replace(/\b(\d+\.?\d*)\b/g, '<span class="lj_num">$1</span>');
+            lj_html = lj_html.replace(/\b(true|false|null)\b/g, '<span class="lj_bool">$1</span>');
+            return lj_html;
+        }
+
+        // 演示三：stringify
+        var lj_stu = {
+            name: "李佳",
+            studentId: "20240001",
+            isMember: true,
+            courses: ["高级网页设计", "JavaScript程序设计"],
+            score: { web: 95, js: 92 }
+        };
+        document.getElementById("lj_btn_stringify").onclick = function(){
+            var lj_json_str = JSON.stringify(lj_stu, null, 2);
+            document.getElementById("lj_out_stringify").innerHTML = lj_highlight(lj_json_str);
+            console.log("序列化结果：", lj_json_str);
+        };
+
+        // 演示四：parse（带 try...catch 错误处理）
+        document.getElementById("lj_btn_parse").onclick = function(){
+            var lj_input = document.getElementById("lj_json_input").value;
+            var lj_err_box = document.getElementById("lj_parse_error");
+            lj_err_box.style.display = "none";
+            try{
+                var lj_obj = JSON.parse(lj_input);
+                var lj_pretty = JSON.stringify(lj_obj, null, 2);
+                document.getElementById("lj_out_parse").innerHTML = lj_highlight(lj_pretty);
+                console.log("解析成功：", lj_obj);
+            }catch(lj_e){
+                // 解析失败：显示错误信息
+                document.getElementById("lj_out_parse").textContent = "// 解析失败";
+                lj_err_box.textContent = "❌ " + lj_e.message;
+                lj_err_box.style.display = "block";
+            }
+        };
+    </script>
+</body>
+</html>
