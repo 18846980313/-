@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-11-02，大模型：GLM-5.3，功能：远程接口测试工具（支持GET/POST/PUT/PATCH/DELETE，显示状态码、返回数据和错误提示，示例为POST jsonplaceholder） -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>远程接口测试工具</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .lj_container{
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px 20px 50px;
+        }
+        h1{
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .lj_sub{
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        h2{
+            font-size: 20px;
+            color: #2c3e50;
+            margin: 34px 0 14px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        /* 说明卡 */
+        .lj_info{
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+            font-size: 14px;
+        }
+        .lj_info p{
+            margin-bottom: 6px;
+        }
+        .lj_method_row{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .lj_method_tag{
+            font-size: 12px;
+            font-family: Consolas, monospace;
+            font-weight: bold;
+            padding: 3px 12px;
+            border-radius: 5px;
+            color: #fff;
+        }
+        .lj_m_get{ background: #27ae60; }
+        .lj_m_post{ background: #e67e22; }
+        .lj_m_put{ background: #2980b9; }
+        .lj_m_patch{ background: #8e44ad; }
+        .lj_m_delete{ background: #e74c3c; }
+        /* 请求设置区 */
+        .lj_panel{
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_form_row{
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .lj_form_row select,
+        .lj_form_row input{
+            padding: 9px 12px;
+            font-size: 14px;
+            border: 2px solid #d5dbdf;
+            border-radius: 6px;
+            outline: none;
+            font-family: Consolas, monospace;
+        }
+        .lj_form_row select{
+            width: 110px;
+            font-family: "Microsoft YaHei", sans-serif;
+            cursor: pointer;
+        }
+        .lj_form_row input{
+            flex: 1;
+            min-width: 240px;
+        }
+        .lj_form_row select:focus,
+        .lj_form_row input:focus,
+        textarea:focus{
+            border-color: #3498db;
+        }
+        textarea{
+            width: 100%;
+            height: 110px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            padding: 10px;
+            border: 2px solid #d5dbdf;
+            border-radius: 6px;
+            resize: vertical;
+            outline: none;
+        }
+        .lj_btn{
+            padding: 9px 26px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .lj_btn:hover{
+            background: #2e86c1;
+        }
+        .lj_btn:disabled{
+            background: #b8c2ca;
+            cursor: not-allowed;
+        }
+        .lj_body_hint{
+            font-size: 12px;
+            color: #999;
+            margin: 4px 0 6px;
+        }
+        /* 示例按钮 */
+        .lj_examples{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .lj_examples button{
+            padding: 6px 14px;
+            font-size: 13px;
+            border: 1px solid #3498db;
+            background: #fff;
+            color: #3498db;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .lj_examples button:hover{
+            background: #eaf4fd;
+        }
+        /* 状态栏 */
+        .lj_status_bar{
+            display: none;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: #f4f6f7;
+            font-size: 13px;
+        }
+        .lj_status_code{
+            font-family: Consolas, monospace;
+            font-weight: bold;
+            font-size: 15px;
+            padding: 2px 12px;
+            border-radius: 6px;
+            color: #fff;
+        }
+        .lj_code_ok{ background: #27ae60; }
+        .lj_code_warn{ background: #e67e22; }
+        .lj_code_err{ background: #e74c3c; }
+        .lj_meta{
+            color: #888;
+        }
+        /* 响应区 */
+        pre{
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            background: #2d2d2d;
+            padding: 12px;
+            border-radius: 8px;
+            overflow: auto;
+            max-height: 360px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #eee;
+            margin-top: 14px;
+        }
+        .lj_key{ color: #7ec8ff; }
+        .lj_str{ color: #ffd479; }
+        .lj_num{ color: #f78c6c; }
+        .lj_bool{ color: #c792ea; }
+        .lj_err{
+            display: none;
+            color: #ff6b6b;
+            background: #fdecea;
+            border: 1px solid #f5b7b1;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+        /* 代码讲解 */
+        .lj_code_card{
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_code_card h3{
+            font-size: 15px;
+            margin-bottom: 10px;
+            color: #e67e22;
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <h1>远程接口测试工具</h1>
+        <p class="lj_sub">一个迷你版"Postman"：填写方法和地址，点击发送，查看返回数据和错误提示</p>
+
+        <!-- 一、工具说明 -->
+        <h2>一、支持的请求方法</h2>
+        <div class="lj_info">
+            <p>常见的 HTTP 请求方法各有用途：GET 获取数据、POST 新建数据、PUT 全量更新、PATCH 局部更新、DELETE 删除数据。本工具用 <code style="font-family:Consolas,monospace;background:#f4f6f7;padding:1px 6px;border-radius:4px;">fetch(url, options)</code> 的 <b>method</b> 选项实现。</p>
+            <div class="lj_method_row">
+                <span class="lj_method_tag lj_m_get">GET 获取</span>
+                <span class="lj_method_tag lj_m_post">POST 新建</span>
+                <span class="lj_method_tag lj_m_put">PUT 更新</span>
+                <span class="lj_method_tag lj_m_patch">PATCH 局部更新</span>
+                <span class="lj_method_tag lj_m_delete">DELETE 删除</span>
+            </div>
+        </div>
+
+        <!-- 二、请求设置 -->
+        <h2>二、发起测试请求</h2>
+        <div class="lj_panel">
+            <div class="lj_form_row">
+                <select id="lj_method">
+                    <option>GET</option>
+                    <option selected>POST</option>
+                    <option>PUT</option>
+                    <option>PATCH</option>
+                    <option>DELETE</option>
+                </select>
+                <input id="lj_url" value="https://jsonplaceholder.typicode.com/posts">
+            </div>
+            <div class="lj_body_hint">请求体（JSON）—— 仅 POST / PUT / PATCH 需要，GET 和 DELETE 会自动忽略：</div>
+            <textarea id="lj_body">{
+  "title": "李佳的接口测试",
+  "body": "这是 17-4 远程接口测试工具发出的 POST 请求",
+  "userId": 1
+}</textarea><br><br>
+            <button class="lj_btn" id="lj_btn_send">发送请求</button>
+
+            <!-- 一键示例 -->
+            <div class="lj_examples">
+                <button onclick="lj_example('GET', 'https://jsonplaceholder.typicode.com/posts/1', '')">示例：GET 单个帖子</button>
+                <button onclick="lj_example('POST', 'https://jsonplaceholder.typicode.com/posts', '{\n  "title": "李佳的接口测试",\n  "body": "POST 新建一条数据",\n  "userId": 1\n}')">示例：POST 新建</button>
+                <button onclick="lj_example('PUT', 'https://jsonplaceholder.typicode.com/posts/1', '{\n  "id": 1,\n  "title": "更新后的标题",\n  "body": "PUT 全量更新",\n  "userId": 1\n}')">示例：PUT 更新</button>
+                <button onclick="lj_example('PATCH', 'https://jsonplaceholder.typicode.com/posts/1', '{\n  "title": "只改标题"\n}')">示例：PATCH 局部更新</button>
+                <button onclick="lj_example('DELETE', 'https://jsonplaceholder.typicode.com/posts/1', '')">示例：DELETE 删除</button>
+                <button onclick="lj_example('GET', 'https://jsonplaceholder.typicode.com/posts/999999', '')">示例：404 错误演示</button>
+            </div>
+        </div>
+
+        <!-- 三、响应结果 -->
+        <h2>三、响应结果</h2>
+        <div class="lj_panel">
+            <div class="lj_status_bar" id="lj_status_bar">
+                <span class="lj_status_code" id="lj_status_code">200</span>
+                <span id="lj_status_text">OK</span>
+                <span class="lj_meta" id="lj_meta">耗时 --ms</span>
+            </div>
+            <div class="lj_err" id="lj_err_box"></div>
+            <pre><code id="lj_res_out">// 点击"发送请求"后，接口返回的数据将显示在这里</code></pre>
+        </div>
+
+        <!-- 四、代码讲解 -->
+        <h2>四、核心代码</h2>
+        <div class="lj_code_card">
+            <h3>fetch 发送 POST 请求</h3>
+<pre>fetch(lj_url, {
+  method: "POST",                        // 请求方法
+  headers: { "Content-Type": "application/json" }, // 告诉服务器：我发的是JSON
+  body: JSON.stringify(lj_body_obj)      // 请求体：JS对象 → JSON字符串
+})
+  .then(function(lj_res){
+    if(lj_res.ok){                       // 状态码 200~299 为成功
+      return lj_res.json();
+    }
+    throw new Error("状态码 " + lj_res.status); // 否则抛错
+  })
+  .then(function(lj_data){ /* 渲染返回数据 */ })
+  .catch(function(lj_e){ /* 显示错误信息 */ });</pre>
+        </div>
+    </div>
+
+    <script>
+        var lj_res_out = document.getElementById("lj_res_out");
+        var lj_err_box = document.getElementById("lj_err_box");
+        var lj_status_bar = document.getElementById("lj_status_bar");
+
+        // JSON 语法高亮
+        function lj_highlight(lj_str){
+            var lj_html = lj_str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            lj_html = lj_html.replace(/"([^"]*)"(\s*:)/g, '<span class="lj_key">"$1"</span>$2');
+            lj_html = lj_html.replace(/:\s*"([^"]*)"/g, ': <span class="lj_str">"$1"</span>');
+            lj_html = lj_html.replace(/\b(\d+\.?\d*)\b/g, '<span class="lj_num">$1</span>');
+            lj_html = lj_html.replace(/\b(true|false|null)\b/g, '<span class="lj_bool">$1</span>');
+            return lj_html;
+        }
+
+        // 状态码显示：2xx 绿色、3xx 黄色、4xx/5xx 红色
+        function lj_status_class(lj_code){
+            if(lj_code >= 200 && lj_code < 300){ return "lj_code_ok"; }
+            if(lj_code >= 300 && lj_code < 400){ return "lj_code_warn"; }
+            return "lj_code_err";
+        }
+
+        // 发送请求
+        function lj_send(){
+            var lj_method = document.getElementById("lj_method").value;
+            var lj_url = document.getElementById("lj_url").value.trim();
+            var lj_body_text = document.getElementById("lj_body").value.trim();
+            lj_err_box.style.display = "none";
+            lj_status_bar.style.display = "none";
+            lj_res_out.textContent = "// 请求中…";
+
+            if(!lj_url){
+                lj_err_box.textContent = "❌ 请填写接口地址";
+                lj_err_box.style.display = "block";
+                return;
+            }
+
+            // 组装 fetch 的配置项
+            var lj_options = { method: lj_method };
+            if(lj_method === "POST" || lj_method === "PUT" || lj_method === "PATCH"){
+                // 有请求体：先校验是不是合法 JSON
+                try{
+                    JSON.parse(lj_body_text);
+                }catch(lj_e){
+                    lj_err_box.textContent = "❌ 请求体不是合法的 JSON：" + lj_e.message;
+                    lj_err_box.style.display = "block";
+                    lj_res_out.textContent = "// 请求未发出";
+                    return;
+                }
+                lj_options.headers = { "Content-Type": "application/json" };
+                lj_options.body = lj_body_text;
+            }
+
+            var lj_start = performance.now();
+            fetch(lj_url, lj_options)
+                .then(function(lj_res){
+                    var lj_ms = Math.round(performance.now() - lj_start);
+                    // 无论成败都显示状态码（2xx 绿色，4xx/5xx 红色）
+                    document.getElementById("lj_status_code").textContent = lj_res.status;
+                    document.getElementById("lj_status_code").className = "lj_status_code " + lj_status_class(lj_res.status);
+                    document.getElementById("lj_status_text").textContent = lj_res.statusText || (lj_res.ok ? "成功" : "失败");
+                    document.getElementById("lj_meta").textContent = "耗时 " + lj_ms + "ms · 方法 " + lj_method;
+                    lj_status_bar.style.display = "flex";
+                    return lj_res.text();
+                })
+                .then(function(lj_text){
+                    // 尝试把返回内容解析成 JSON 美化显示，失败就原样显示
+                    try{
+                        lj_res_out.innerHTML = lj_highlight(JSON.stringify(JSON.parse(lj_text), null, 2));
+                    }catch(lj_e){
+                        lj_res_out.textContent = lj_text || "（接口没有返回内容）";
+                    }
+                    console.log(lj_method, lj_url, "返回：", lj_text);
+                })
+                .catch(function(lj_e){
+                    // 网络错误、跨域被拦截、断网等都会走到这里
+                    lj_res_out.textContent = "// 请求失败";
+                    lj_err_box.textContent = "❌ " + lj_e.message + " —— 常见原因：网络未连接、接口不允许跨域、地址写错了";
+                    lj_err_box.style.display = "block";
+                });
+        }
+
+        // 一键填入示例并发送
+        function lj_example(lj_method, lj_url, lj_body){
+            document.getElementById("lj_method").value = lj_method;
+            document.getElementById("lj_url").value = lj_url;
+            document.getElementById("lj_body").value = lj_body;
+            lj_send();
+        }
+
+        document.getElementById("lj_btn_send").onclick = lj_send;
+    </script>
+</body>
+</html>

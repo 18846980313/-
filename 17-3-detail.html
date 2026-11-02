@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-11-02，大模型：GLM-5.3，功能：商品详情页（解析URL的id参数，fetch获取dummyjson单个商品接口数据并展示，可返回列表页） -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情页</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .lj_container{
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px 20px 50px;
+        }
+        h1{
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .lj_sub{
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        h2{
+            font-size: 20px;
+            color: #2c3e50;
+            margin: 34px 0 14px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        /* 返回按钮 */
+        .lj_back{
+            display: inline-block;
+            padding: 8px 20px;
+            background: #95a5a6;
+            color: #fff;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+        .lj_back:hover{
+            background: #7f8c8d;
+        }
+        /* 接口说明 */
+        .lj_api_info{
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+            font-size: 14px;
+        }
+        .lj_api_info table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .lj_api_info td{
+            padding: 7px 6px;
+            border-bottom: 1px dashed #e5e8ec;
+            vertical-align: top;
+        }
+        .lj_api_info tr:last-child td{
+            border-bottom: none;
+        }
+        .lj_api_info td:first-child{
+            width: 110px;
+            color: #888;
+            white-space: nowrap;
+        }
+        .lj_api_info code{
+            font-family: Consolas, monospace;
+            background: #f4f6f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #24292e;
+            word-break: break-all;
+        }
+        /* 请求过程 */
+        .lj_steps{
+            margin-top: 14px;
+            font-size: 13px;
+        }
+        .lj_steps div{
+            padding: 4px 0 4px 22px;
+            position: relative;
+            color: #666;
+        }
+        .lj_steps div::before{
+            content: "●";
+            position: absolute;
+            left: 4px;
+            color: #27ae60;
+            font-size: 10px;
+            top: 7px;
+        }
+        .lj_steps div span{
+            color: #aaa;
+            margin-left: 8px;
+            font-size: 12px;
+        }
+        .lj_err{
+            display: none;
+            color: #ff6b6b;
+            background: #fdecea;
+            border: 1px solid #f5b7b1;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+        /* 商品详情卡片 */
+        .lj_detail{
+            background: #fff;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+            display: none;
+            grid-template-columns: 340px 1fr;
+            gap: 24px;
+        }
+        .lj_detail_img img{
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: contain;
+            background: #fafbfc;
+            border-radius: 10px;
+        }
+        .lj_detail_info h3{
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        .lj_tags{
+            margin-bottom: 12px;
+        }
+        .lj_tags span{
+            display: inline-block;
+            font-size: 12px;
+            color: #666;
+            background: #f2f3f5;
+            border-radius: 20px;
+            padding: 3px 12px;
+            margin-right: 8px;
+            margin-bottom: 6px;
+        }
+        .lj_rating{
+            color: #f39c12;
+            font-size: 14px;
+            margin-bottom: 14px;
+        }
+        .lj_price_row{
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+        .lj_price{
+            font-size: 28px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .lj_price_old{
+            font-size: 15px;
+            color: #bbb;
+            text-decoration: line-through;
+        }
+        .lj_discount{
+            font-size: 12px;
+            background: #fdecea;
+            color: #e74c3c;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .lj_stock{
+            font-size: 13px;
+            color: #27ae60;
+            margin-bottom: 14px;
+        }
+        .lj_desc{
+            font-size: 14px;
+            color: #555;
+            border-top: 1px dashed #e5e8ec;
+            padding-top: 12px;
+        }
+        /* JSON 展示 */
+        pre{
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            background: #2d2d2d;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #eee;
+            margin-top: 14px;
+        }
+        .lj_key{ color: #7ec8ff; }
+        .lj_str{ color: #ffd479; }
+        .lj_num{ color: #f78c6c; }
+        .lj_bool{ color: #c792ea; }
+        /* 代码讲解 */
+        .lj_code_card{
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_code_card h3{
+            font-size: 15px;
+            margin-bottom: 10px;
+            color: #e67e22;
+        }
+        @media (max-width: 640px){
+            .lj_detail{
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <a class="lj_back" href="17-3.html">← 返回商品列表</a>
+        <h1>商品详情页</h1>
+        <p class="lj_sub">从地址栏读取 id 参数，fetch 获取该商品的详细数据</p>
+
+        <!-- 一、接口说明 -->
+        <h2>一、本页调用的接口</h2>
+        <div class="lj_api_info">
+            <table>
+                <tr>
+                    <td>详情接口</td>
+                    <td><code>https://dummyjson.com/products/<b id="lj_show_id">1</b></code>（把商品 id 拼在最后）</td>
+                </tr>
+                <tr>
+                    <td>请求方式</td>
+                    <td><code>GET</code></td>
+                </tr>
+                <tr>
+                    <td>id 从哪来</td>
+                    <td>列表页点击商品时，通过地址栏 <code>?id=商品ID</code> 传过来；没有参数时默认 <code>id=1</code></td>
+                </tr>
+                <tr>
+                    <td>返回格式</td>
+                    <td><code>JSON</code> 单个对象，含 <code>title / price / rating / description / images</code> 等字段</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 二、请求过程 -->
+        <h2>二、请求过程</h2>
+        <div class="lj_steps" id="lj_steps"></div>
+        <div class="lj_err" id="lj_err_box"></div>
+
+        <!-- 三、商品详情 -->
+        <h2>三、商品详情</h2>
+        <div class="lj_detail" id="lj_detail">
+            <div class="lj_detail_img"><img id="lj_img" src="" alt=""></div>
+            <div class="lj_detail_info">
+                <h3 id="lj_title">加载中…</h3>
+                <div class="lj_tags" id="lj_tags"></div>
+                <div class="lj_rating" id="lj_rating"></div>
+                <div class="lj_price_row">
+                    <span class="lj_price" id="lj_price"></span>
+                    <span class="lj_price_old" id="lj_price_old"></span>
+                    <span class="lj_discount" id="lj_discount"></span>
+                </div>
+                <div class="lj_stock" id="lj_stock"></div>
+                <div class="lj_desc" id="lj_desc"></div>
+            </div>
+        </div>
+        <pre><code id="lj_json_out">// 接口返回的 JSON 数据（节选）将显示在这里</code></pre>
+
+        <!-- 四、代码讲解 -->
+        <h2>四、核心代码</h2>
+        <div class="lj_code_card">
+            <h3>解析地址栏参数 + fetch 单个商品</h3>
+<pre>// 1. 从地址栏拿 id：17-3-detail.html?id=3 → "3"，默认 1
+var lj_id = new URLSearchParams(location.search).get("id") || 1;
+
+// 2. 把 id 拼进接口地址
+fetch("https://dummyjson.com/products/" + lj_id)
+  .then(function(lj_res){ return lj_res.json(); })
+  .then(function(lj_p){          // lj_p 就是这件商品的数据
+    document.getElementById("lj_title").textContent = lj_p.title;
+    // …渲染价格、评分、简介等
+  })
+  .catch(function(lj_e){ /* 出错处理 */ });</pre>
+        </div>
+    </div>
+
+    <script>
+        var lj_steps = document.getElementById("lj_steps");
+
+        // 1. 从地址栏解析 id，没有参数时默认 1
+        var lj_id = new URLSearchParams(location.search).get("id") || 1;
+        document.getElementById("lj_show_id").textContent = lj_id;
+        var lj_url = "https://dummyjson.com/products/" + lj_id;
+
+        // 记录请求过程的一步
+        function lj_log(lj_text){
+            var lj_row = document.createElement("div");
+            var lj_now = new Date();
+            var lj_t = lj_now.getMinutes() + ":" + lj_now.getSeconds() + "." + lj_now.getMilliseconds();
+            lj_row.innerHTML = lj_text + "<span>" + lj_t + "</span>";
+            lj_steps.appendChild(lj_row);
+        }
+
+        // JSON 语法高亮
+        function lj_highlight(lj_str){
+            var lj_html = lj_str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            lj_html = lj_html.replace(/"([^"]*)"(\s*:)/g, '<span class="lj_key">"$1"</span>$2');
+            lj_html = lj_html.replace(/:\s*"([^"]*)"/g, ': <span class="lj_str">"$1"</span>');
+            lj_html = lj_html.replace(/\b(\d+\.?\d*)\b/g, '<span class="lj_num">$1</span>');
+            lj_html = lj_html.replace(/\b(true|false|null)\b/g, '<span class="lj_bool">$1</span>');
+            return lj_html;
+        }
+
+        // 2. 请求详情数据并渲染
+        lj_log("解析地址栏，得到商品 id = " + lj_id);
+        lj_log("调用 fetch()，请求该商品详情");
+        fetch(lj_url)
+            .then(function(lj_res){
+                lj_log("收到响应（状态码 " + lj_res.status + "），res.json() 解析数据");
+                return lj_res.json();
+            })
+            .then(function(lj_p){
+                lj_log("解析完成！开始渲染商品详情");
+                // 图片与标题
+                document.getElementById("lj_img").src = lj_p.thumbnail;
+                document.getElementById("lj_img").alt = lj_p.title;
+                document.getElementById("lj_title").textContent = lj_p.title;
+                // 标签：品牌 · 分类 · 库存
+                document.getElementById("lj_tags").innerHTML =
+                    '<span>' + (lj_p.brand || "无品牌") + '</span><span>' + lj_p.category + '</span><span>ID: ' + lj_p.id + '</span>';
+                // 评分五角星
+                var lj_full = Math.round(lj_p.rating);
+                document.getElementById("lj_rating").textContent = "★".repeat(lj_full) + "☆".repeat(5 - lj_full) + " " + lj_p.rating + " 分";
+                // 价格：原价划线 + 折后价 + 折扣徽章
+                document.getElementById("lj_price").textContent = "$" + (lj_p.price * (1 - lj_p.discountPercentage / 100)).toFixed(2);
+                document.getElementById("lj_price_old").textContent = "$" + lj_p.price;
+                document.getElementById("lj_discount").textContent = "-" + lj_p.discountPercentage + "%";
+                document.getElementById("lj_stock").textContent = "库存 " + lj_p.stock + " 件";
+                document.getElementById("lj_desc").textContent = "商品简介：" + lj_p.description;
+                document.getElementById("lj_detail").style.display = "grid";
+                // JSON 节选
+                var lj_pick = {
+                    id: lj_p.id,
+                    title: lj_p.title,
+                    brand: lj_p.brand,
+                    category: lj_p.category,
+                    price: lj_p.price,
+                    discountPercentage: lj_p.discountPercentage,
+                    rating: lj_p.rating,
+                    stock: lj_p.stock
+                };
+                document.getElementById("lj_json_out").innerHTML = lj_highlight(JSON.stringify(lj_pick, null, 2));
+                console.log("商品详情：", lj_p);
+            })
+            .catch(function(lj_e){
+                document.getElementById("lj_json_out").textContent = "// 请求失败";
+                var lj_err_box = document.getElementById("lj_err_box");
+                lj_err_box.textContent = "❌ " + lj_e.message + " —— 请检查网络连接后，返回列表重试";
+                lj_err_box.style.display = "block";
+            });
+    </script>
+</body>
+</html>

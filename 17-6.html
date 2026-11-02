@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-11-02，大模型：GLM-5.3，功能：用Promise和async/await演示包饺子异步流程（买原料6s→取原料→和面/和馅并行Promise.all→包饺子→吃饺子），页面可视化每个步骤 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>异步包饺子：Promise 与 async/await</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .lj_container{
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px 20px 50px;
+        }
+        h1{
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .lj_sub{
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        h2{
+            font-size: 20px;
+            color: #2c3e50;
+            margin: 34px 0 14px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        /* 流程表 */
+        .lj_info{
+            background: #fff;
+            border-radius: 10px;
+            padding: 6px 20px 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+            overflow-x: auto;
+        }
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td{
+            padding: 9px 12px;
+            border-bottom: 1px dashed #e5e8ec;
+            text-align: left;
+        }
+        tr:last-child td{
+            border-bottom: none;
+        }
+        th{
+            color: #888;
+            font-weight: normal;
+        }
+        code{
+            font-family: Consolas, monospace;
+            background: #f4f6f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #c0392b;
+        }
+        /* 演示区 */
+        .lj_panel{
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_btn_row{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+        .lj_btn{
+            padding: 9px 22px;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .lj_btn:hover{
+            opacity: .9;
+        }
+        .lj_btn:disabled{
+            background: #b8c2ca;
+            cursor: not-allowed;
+        }
+        .lj_btn_promise{ background: #e67e22; }
+        .lj_btn_async{ background: #16a085; }
+        .lj_btn_reset{ background: #95a5a6; }
+        .lj_total{
+            display: none;
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: #eafaf1;
+            color: #27ae60;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        /* 步骤流程图 */
+        .lj_flow{
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .lj_step{
+            width: 220px;
+            background: #f7f8f9;
+            border: 2px solid #d5dbdf;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            transition: all .3s;
+        }
+        .lj_step .lj_icon{
+            font-size: 30px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .lj_step .lj_name{
+            font-weight: bold;
+            font-size: 15px;
+            color: #2c3e50;
+        }
+        .lj_step .lj_state{
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+        .lj_arrow{
+            color: #b8c2ca;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+        .lj_step.lj_doing{
+            border-color: #3498db;
+            background: #eaf4fd;
+            animation: lj_pulse 1s infinite;
+        }
+        .lj_step.lj_doing .lj_state{
+            color: #3498db;
+            font-weight: bold;
+        }
+        .lj_step.lj_done{
+            border-color: #27ae60;
+            background: #eafaf1;
+        }
+        .lj_step.lj_done .lj_state{
+            color: #27ae60;
+            font-weight: bold;
+        }
+        @keyframes lj_pulse{
+            0%{ box-shadow: 0 0 0 0 rgba(52, 152, 219, .4); }
+            70%{ box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+            100%{ box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
+        }
+        /* 并行区 */
+        .lj_parallel{
+            display: flex;
+            gap: 16px;
+            position: relative;
+        }
+        .lj_parallel_tag{
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #e67e22;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        /* 日志 */
+        .lj_log{
+            margin-top: 16px;
+            background: #2d2d2d;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 180px;
+            overflow: auto;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            color: #bbb;
+            line-height: 1.9;
+        }
+        .lj_log b{
+            color: #7ec8ff;
+            font-weight: normal;
+        }
+        .lj_log .lj_ok{
+            color: #2ecc71;
+        }
+        /* 代码对比 */
+        .lj_code_grid{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 700px){
+            .lj_code_grid{ grid-template-columns: 1fr; }
+        }
+        .lj_code_card{
+            background: #2d2d2d;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .lj_code_card h3{
+            background: #34435a;
+            color: #fff;
+            font-size: 14px;
+            padding: 9px 14px;
+        }
+        .lj_code_card pre{
+            padding: 12px;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            color: #eee;
+            line-height: 1.8;
+            overflow: auto;
+        }
+        .lj_c_key{ color: #c792ea; }
+        .lj_c_fn{ color: #7ec8ff; }
+        .lj_c_str{ color: #ffd479; }
+        .lj_c_num{ color: #f78c6c; }
+        .lj_c_com{ color: #7f8c8d; }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <h1>异步包饺子 🥟</h1>
+        <p class="lj_sub">用 Promise 和 async/await 编排做饺子的每一步，setTimeout 模拟每道工序的耗时</p>
+
+        <!-- 一、流程说明 -->
+        <h2>一、包饺子流程（模拟耗时）</h2>
+        <div class="lj_info">
+            <table>
+                <tr><th>步骤</th><th>耗时</th><th>说明</th></tr>
+                <tr><td>🛒 买原料</td><td><b>6 秒</b></td><td>异步任务一，买面粉、肉、菜</td></tr>
+                <tr><td>🥬 取原料</td><td>2 秒</td><td>等原料买完才能取，必须等上一步</td></tr>
+                <tr><td>🥣 和面 + 🥟 和馅</td><td>4 秒 / 5 秒</td><td><b>同时进行</b>，用 <code>Promise.all</code> 等两个都完成（按慢的 5 秒算）</td></tr>
+                <tr><td>🥟 包饺子</td><td>3 秒</td><td>面和馅都好了才能包</td></tr>
+                <tr><td>🍽 吃饺子</td><td>1 秒</td><td>包完就吃！</td></tr>
+            </table>
+            <p style="font-size:13px;color:#888;margin-top:8px;">串行部分 6+2=8 秒，并行部分只等最慢的 5 秒，再加 3+1 秒，全程约 <b>17 秒</b>。等待期间页面完全流畅，这就是异步的好处。</p>
+        </div>
+
+        <!-- 二、演示 -->
+        <h2>二、开始包饺子（两种写法，结果相同）</h2>
+        <div class="lj_panel">
+            <div class="lj_btn_row">
+                <button class="lj_btn lj_btn_promise" id="lj_btn_promise">① Promise 链式写法</button>
+                <button class="lj_btn lj_btn_async" id="lj_btn_async">② async/await 写法</button>
+                <button class="lj_btn lj_btn_reset" id="lj_btn_reset">重置</button>
+            </div>
+            <div class="lj_total" id="lj_total"></div>
+
+            <div class="lj_flow">
+                <div class="lj_step" id="lj_step_buy">
+                    <span class="lj_icon">🛒</span>
+                    <div class="lj_name">买原料</div>
+                    <div class="lj_state" id="lj_state_buy">等待开始（6s）</div>
+                </div>
+                <div class="lj_arrow">↓</div>
+                <div class="lj_step" id="lj_step_take">
+                    <span class="lj_icon">🥬</span>
+                    <div class="lj_name">取原料</div>
+                    <div class="lj_state" id="lj_state_take">等待开始（2s）</div>
+                </div>
+                <div class="lj_arrow">↓</div>
+                <div class="lj_parallel">
+                    <div class="lj_parallel_tag">Promise.all：两件事同时做</div>
+                    <div class="lj_step" id="lj_step_dough">
+                        <span class="lj_icon">🥣</span>
+                        <div class="lj_name">和面</div>
+                        <div class="lj_state" id="lj_state_dough">等待开始（4s）</div>
+                    </div>
+                    <div class="lj_step" id="lj_step_fill">
+                        <span class="lj_icon">🥟</span>
+                        <div class="lj_name">和馅</div>
+                        <div class="lj_state" id="lj_state_fill">等待开始（5s）</div>
+                    </div>
+                </div>
+                <div class="lj_arrow">↓</div>
+                <div class="lj_step" id="lj_step_wrap">
+                    <span class="lj_icon">🥟</span>
+                    <div class="lj_name">包饺子</div>
+                    <div class="lj_state" id="lj_state_wrap">等待开始（3s）</div>
+                </div>
+                <div class="lj_arrow">↓</div>
+                <div class="lj_step" id="lj_step_eat">
+                    <span class="lj_icon">🍽</span>
+                    <div class="lj_name">吃饺子</div>
+                    <div class="lj_state" id="lj_state_eat">等待开始（1s）</div>
+                </div>
+            </div>
+
+            <div class="lj_log" id="lj_log">// 点击上方按钮，这里会实时打印每一步的日志</div>
+        </div>
+
+        <!-- 三、代码对比 -->
+        <h2>三、两种写法代码对比</h2>
+        <div class="lj_code_grid">
+            <div class="lj_code_card">
+                <h3>写法一：Promise 链式调用</h3>
+<pre><span class="lj_c_com">// 每个步骤都返回一个 Promise</span>
+<span class="lj_c_key">function</span> <span class="lj_c_fn">lj_buy</span>(){ <span class="lj_c_key">return</span> <span class="lj_c_fn">lj_step</span>(<span class="lj_c_str">"买原料"</span>, <span class="lj_c_num">6000</span>); }
+
+<span class="lj_c_fn">lj_buy</span>()
+  .<span class="lj_c_key">then</span>(<span class="lj_c_fn">lj_take</span>)                      <span class="lj_c_com">// 买完 → 取原料</span>
+  .<span class="lj_c_key">then</span>(<span class="lj_c_key">function</span>(){
+    <span class="lj_c_com">// 和面、和馅同时开始</span>
+    <span class="lj_c_key">return</span> Promise.<span class="lj_c_fn">all</span>([<span class="lj_c_fn">lj_dough</span>(), <span class="lj_c_fn">lj_filling</span>()]);
+  })
+  .<span class="lj_c_key">then</span>(<span class="lj_c_fn">lj_wrap</span>)                    <span class="lj_c_com">// 都好了 → 包饺子</span>
+  .<span class="lj_c_key">then</span>(<span class="lj_c_fn">lj_eat</span>)                     <span class="lj_c_com">// 包完 → 吃饺子</span>
+  .<span class="lj_c_key">then</span>(<span class="lj_c_key">function</span>(){ <span class="lj_c_fn">console</span>.log(<span class="lj_c_str">"全部完成！"</span>); });</pre>
+            </div>
+            <div class="lj_code_card">
+                <h3>写法二：async/await（推荐）</h3>
+<pre><span class="lj_c_key">async function</span> <span class="lj_c_fn">lj_cook</span>(){
+  <span class="lj_c_key">await</span> <span class="lj_c_fn">lj_buy</span>();        <span class="lj_c_com">// 等买原料完成</span>
+  <span class="lj_c_key">await</span> <span class="lj_c_fn">lj_take</span>();       <span class="lj_c_com">// 等取原料完成</span>
+  <span class="lj_c_com">// 和面、和馅同时开始，等两个都完成</span>
+  <span class="lj_c_key">await</span> Promise.<span class="lj_c_fn">all</span>([<span class="lj_c_fn">lj_dough</span>(), <span class="lj_c_fn">lj_filling</span>()]);
+  <span class="lj_c_key">await</span> <span class="lj_c_fn">lj_wrap</span>();       <span class="lj_c_com">// 等包饺子完成</span>
+  <span class="lj_c_key">await</span> <span class="lj_c_fn">lj_eat</span>();        <span class="lj_c_com">// 等吃饺子完成</span>
+  console.log(<span class="lj_c_str">"全部完成！"</span>);
+}
+<span class="lj_c_com">// await 只能写在 async 函数里，代码像同步一样好读</span></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 通用：让某个步骤"耗时 ms 毫秒后完成"，返回 Promise
+        function lj_step(lj_id, lj_name, lj_ms){
+            return new Promise(function(lj_resolve){
+                var lj_el = document.getElementById(lj_id);
+                var lj_state = document.getElementById("lj_state_" + lj_id.replace("lj_step_", ""));
+                lj_el.classList.add("lj_doing");
+                lj_log_add(lj_name + " 开始（预计 " + (lj_ms / 1000) + "s）…");
+                console.log(lj_name + " 开始");
+                var lj_left = lj_ms / 1000;
+                var lj_cd = setInterval(function(){
+                    lj_left--;
+                    if(lj_left > 0){
+                        lj_state.textContent = "进行中…还剩 " + lj_left + "s";
+                    }
+                }, 1000);
+                setTimeout(function(){
+                    clearInterval(lj_cd);
+                    lj_el.classList.remove("lj_doing");
+                    lj_el.classList.add("lj_done");
+                    lj_state.textContent = "完成 ✓（" + (lj_ms / 1000) + "s）";
+                    lj_log_add(lj_name + " 完成", true);
+                    lj_resolve();
+                }, lj_ms);
+            });
+        }
+
+        // 六道工序，各自返回 Promise
+        function lj_buy(){   return lj_step("lj_step_buy",   "🛒 买原料", 6000); }
+        function lj_take(){  return lj_step("lj_step_take",  "🥬 取原料", 2000); }
+        function lj_dough(){ return lj_step("lj_step_dough", "🥣 和面",   4000); }
+        function lj_filling(){ return lj_step("lj_step_fill", "🥟 和馅", 5000); }
+        function lj_wrap(){  return lj_step("lj_step_wrap",  "🥟 包饺子", 3000); }
+        function lj_eat(){   return lj_step("lj_step_eat",    "🍽 吃饺子", 1000); }
+
+        // 日志
+        function lj_log_add(lj_text, lj_ok){
+            var lj_log = document.getElementById("lj_log");
+            var lj_d = new Date();
+            var lj_time = lj_d.toTimeString().slice(0, 8) + "." + ("00" + lj_d.getMilliseconds()).slice(-3);
+            lj_log.innerHTML += "[" + lj_time + "] " + lj_text + (lj_ok ? "" : "") + "<br>";
+        }
+
+        // 防止重复启动
+        var lj_running = false;
+
+        function lj_before_run(){
+            if(lj_running){ return false; }
+            lj_running = true;
+            lj_reset_steps();
+            document.getElementById("lj_total").style.display = "none";
+            document.getElementById("lj_btn_promise").disabled = true;
+            document.getElementById("lj_btn_async").disabled = true;
+            document.getElementById("lj_log").innerHTML = "";
+            return true;
+        }
+        function lj_after_run(lj_start){
+            var lj_ms = Math.round(performance.now() - lj_start);
+            document.getElementById("lj_total").style.display = "block";
+            document.getElementById("lj_total").textContent = "🎉 包饺子流程全部完成！总耗时 " + (lj_ms / 1000).toFixed(1) + " 秒（串行 8s + 并行按最慢的 5s + 3s + 1s）";
+            lj_log_add("全部完成，页面在等待期间一直流畅运行", true);
+            lj_running = false;
+            document.getElementById("lj_btn_promise").disabled = false;
+            document.getElementById("lj_btn_async").disabled = false;
+        }
+        function lj_reset_steps(){
+            var lj_ids = ["buy", "take", "dough", "fill", "wrap", "eat"];
+            var lj_times = ["6s", "2s", "4s", "5s", "3s", "1s"];
+            for(var lj_i = 0; lj_i < lj_ids.length; lj_i++){
+                document.getElementById("lj_step_" + lj_ids[lj_i]).className = "lj_step";
+                document.getElementById("lj_state_" + lj_ids[lj_i]).textContent = "等待开始（" + lj_times[lj_i] + "）";
+            }
+        }
+
+        // ========== 写法一：Promise 链式 ==========
+        document.getElementById("lj_btn_promise").onclick = function(){
+            if(!lj_before_run()){ return; }
+            lj_log_add("—— Promise 链式写法开始 ——");
+            var lj_start = performance.now();
+            lj_buy()
+                .then(lj_take)
+                .then(function(){
+                    return Promise.all([ lj_dough(), lj_filling() ]);   // 同时和面、和馅
+                })
+                .then(lj_wrap)
+                .then(lj_eat)
+                .then(function(){
+                    lj_after_run(lj_start);
+                });
+        };
+
+        // ========== 写法二：async/await ==========
+        document.getElementById("lj_btn_async").onclick = function(){
+            if(!lj_before_run()){ return; }
+            lj_log_add("—— async/await 写法开始 ——");
+            lj_cook_async(performance.now());
+        };
+        async function lj_cook_async(lj_start){
+            await lj_buy();                                   // 1. 买原料 6s
+            await lj_take();                                  // 2. 取原料 2s
+            await Promise.all([ lj_dough(), lj_filling() ]);  // 3. 同时和面 4s、和馅 5s
+            await lj_wrap();                                  // 4. 包饺子 3s
+            await lj_eat();                                   // 5. 吃饺子 1s
+            lj_after_run(lj_start);
+        }
+
+        // 重置
+        document.getElementById("lj_btn_reset").onclick = function(){
+            lj_running = false;
+            lj_reset_steps();
+            document.getElementById("lj_total").style.display = "none";
+            document.getElementById("lj_log").innerHTML = "// 点击上方按钮，这里会实时打印每一步的日志";
+        };
+    </script>
+</body>
+</html>

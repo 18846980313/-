@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：李佳，建立时间：2026-11-02，大模型：GLM-5.3，功能：展示JavaScript两种定时器（setTimeout延时执行可取消、setInterval实时时钟、倒计时自动停止，含对比表与常见坑） -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 两种定时器</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .lj_container{
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px 20px 50px;
+        }
+        h1{
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .lj_sub{
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        h2{
+            font-size: 20px;
+            color: #2c3e50;
+            margin: 34px 0 14px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        /* 对比表 */
+        .lj_vs{
+            background: #fff;
+            border-radius: 10px;
+            padding: 6px 20px 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+            overflow-x: auto;
+        }
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td{
+            padding: 10px 12px;
+            border-bottom: 1px dashed #e5e8ec;
+            text-align: left;
+            vertical-align: top;
+        }
+        th{
+            color: #888;
+            font-weight: normal;
+            white-space: nowrap;
+            width: 90px;
+        }
+        td:last-child{
+            color: #666;
+        }
+        td:first-child{
+            font-weight: bold;
+            color: #2c3e50;
+            white-space: nowrap;
+        }
+        tr:last-child td{
+            border-bottom: none;
+        }
+        code{
+            font-family: Consolas, monospace;
+            background: #f4f6f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #c0392b;
+        }
+        /* 演示面板 */
+        .lj_panel{
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_panel p{
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+        .lj_btn{
+            padding: 8px 20px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .lj_btn:hover{
+            background: #2e86c1;
+        }
+        .lj_btn.lj_green{
+            background: #27ae60;
+        }
+        .lj_btn.lj_green:hover{
+            background: #1f8b4d;
+        }
+        .lj_btn.lj_red{
+            background: #e74c3c;
+        }
+        .lj_btn.lj_red:hover{
+            background: #c0392b;
+        }
+        .lj_btn:disabled{
+            background: #b8c2ca;
+            cursor: not-allowed;
+        }
+        /* 结果展示区 */
+        .lj_result{
+            margin-top: 14px;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px dashed #d5dbdf;
+            color: #999;
+            font-size: 15px;
+        }
+        .lj_result.lj_on{
+            border-color: #27ae60;
+            background: #eafaf1;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .lj_result.lj_waiting{
+            border-color: #f39c12;
+            background: #fef9e7;
+            color: #b9770e;
+        }
+        .lj_clock{
+            font-family: Consolas, monospace;
+            font-size: 42px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .lj_tick{
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 6px;
+        }
+        /* 进度条 */
+        .lj_bar_bg{
+            height: 14px;
+            background: #eef1f4;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 14px;
+        }
+        .lj_bar{
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #f8679e, #e74c3c);
+            border-radius: 20px;
+            transition: width 1s linear;
+        }
+        .lj_count_num{
+            font-family: Consolas, monospace;
+            font-size: 52px;
+            font-weight: bold;
+            color: #e74c3c;
+            line-height: 1.2;
+        }
+        /* 常见坑 */
+        .lj_tips{
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+        }
+        .lj_tips li{
+            list-style: none;
+            padding: 8px 0 8px 26px;
+            position: relative;
+            font-size: 14px;
+            color: #555;
+        }
+        .lj_tips li::before{
+            content: "!";
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 16px;
+            height: 16px;
+            background: #f39c12;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 16px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="lj_container">
+        <h1>JavaScript 两种定时器</h1>
+        <p class="lj_sub">setTimeout 延时执行一次 · setInterval 每隔一段时间重复执行</p>
+
+        <!-- 一、对比表 -->
+        <h2>一、两种定时器对比</h2>
+        <div class="lj_vs">
+            <table>
+                <tr>
+                    <th></th>
+                    <td>setTimeout（延时定时器）</td>
+                    <td>setInterval（重复定时器）</td>
+                </tr>
+                <tr>
+                    <th>语法</th>
+                    <td><code>setTimeout(函数, 毫秒数)</code></td>
+                    <td><code>setInterval(函数, 毫秒数)</code></td>
+                </tr>
+                <tr>
+                    <th>执行次数</th>
+                    <td>到时间后只执行<b>一次</b></td>
+                    <td>每隔固定时间<b>重复执行</b></td>
+                </tr>
+                <tr>
+                    <th>清除方法</th>
+                    <td><code>clearTimeout(定时器ID)</code></td>
+                    <td><code>clearInterval(定时器ID)</code></td>
+                </tr>
+                <tr>
+                    <th>返回值</th>
+                    <td>定时器 ID（数字），用于清除</td>
+                    <td>定时器 ID（数字），用于清除</td>
+                </tr>
+                <tr>
+                    <th>典型应用</th>
+                    <td>广告 3 秒后自动关闭、延时提示</td>
+                    <td>时钟、倒计时、轮播图自动播放</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 二、setTimeout 演示 -->
+        <h2>二、setTimeout 演示：3 秒后亮灯（可取消）</h2>
+        <div class="lj_panel">
+            <p>点击"启动"后，等待 3 秒绿灯亮起；在亮之前点"取消"，用 clearTimeout 阻止它执行。</p>
+            <button class="lj_btn lj_green" id="lj_btn_start1">启动 setTimeout</button>
+            <button class="lj_btn lj_red" id="lj_btn_cancel1">取消（clearTimeout）</button>
+            <div class="lj_result" id="lj_light">灯还没亮 —— 点击"启动"开始等待</div>
+        </div>
+
+        <!-- 三、setInterval 演示：实时时钟 -->
+        <h2>三、setInterval 演示：实时时钟（每秒跳动）</h2>
+        <div class="lj_panel">
+            <p>每 1000 毫秒（1 秒）执行一次，更新页面上的时间；"停止"用 clearInterval 清除定时器。</p>
+            <button class="lj_btn" id="lj_btn_clock_start">开始时钟</button>
+            <button class="lj_btn lj_red" id="lj_btn_clock_stop">停止时钟</button>
+            <div class="lj_result" id="lj_clock_box">
+                <div class="lj_clock" id="lj_clock">00:00:00</div>
+                <div class="lj_tick" id="lj_clock_tick">setInterval 还没有启动</div>
+            </div>
+        </div>
+
+        <!-- 四、综合演示：10 秒倒计时 -->
+        <h2>四、综合演示：10 秒倒计时（自动停止）</h2>
+        <div class="lj_panel">
+            <p>setInterval 每秒倒数 1 个数，数到 0 时在回调函数里调用 clearInterval 自己停掉——这是"倒计时自动结束"的通用套路。</p>
+            <button class="lj_btn lj_green" id="lj_btn_count_start">开始倒计时</button>
+            <button class="lj_btn lj_red" id="lj_btn_count_reset">重置</button>
+            <div class="lj_result" id="lj_count_box">
+                <div class="lj_count_num" id="lj_count_num">10</div>
+                <div id="lj_count_tip">点击"开始倒计时"</div>
+                <div class="lj_bar_bg"><div class="lj_bar" id="lj_bar"></div></div>
+            </div>
+        </div>
+
+        <!-- 五、常见坑 -->
+        <h2>五、使用定时器的三个常见坑</h2>
+        <ul class="lj_tips">
+            <li>用完 setInterval 忘记 clearInterval —— 页面越跑越卡，定时器还在偷偷执行</li>
+            <li>定时器 ID 必须存进变量（如 <code>var lj_timer = setInterval(...)</code>），否则没法清除</li>
+            <li><code>setTimeout(fn, 0)</code> 并不是"立即执行"，只是尽快放到任务队列排队的末尾</li>
+        </ul>
+    </div>
+
+    <script>
+        // ========== 演示二：setTimeout 3 秒后亮灯 ==========
+        var lj_timer_1 = null;
+        document.getElementById("lj_btn_start1").onclick = function(){
+            var lj_light = document.getElementById("lj_light");
+            lj_light.className = "lj_result lj_waiting";
+            lj_light.textContent = "等待中…（3 秒后亮灯，期间可点取消）";
+            // 到时间只执行一次
+            lj_timer_1 = setTimeout(function(){
+                lj_light.className = "lj_result lj_on";
+                lj_light.textContent = "💡 时间到！灯亮了 —— setTimeout 只执行了这一次";
+                console.log("setTimeout 触发");
+            }, 3000);
+        };
+        document.getElementById("lj_btn_cancel1").onclick = function(){
+            clearTimeout(lj_timer_1);   // 清除定时器，函数不再执行
+            var lj_light = document.getElementById("lj_light");
+            lj_light.className = "lj_result";
+            lj_light.textContent = "已取消！clearTimeout 成功阻止了定时器";
+            console.log("已 clearTimeout");
+        };
+
+        // ========== 演示三：setInterval 实时时钟 ==========
+        var lj_timer_2 = null;
+        var lj_ticks = 0;
+        function lj_pad(lj_n){
+            return lj_n < 10 ? "0" + lj_n : "" + lj_n;
+        }
+        function lj_now_time(){
+            var lj_d = new Date();
+            return lj_pad(lj_d.getHours()) + ":" + lj_pad(lj_d.getMinutes()) + ":" + lj_pad(lj_d.getSeconds());
+        }
+        document.getElementById("lj_btn_clock_start").onclick = function(){
+            if(lj_timer_2 !== null){ return; }   // 防止重复启动
+            lj_ticks = 0;
+            document.getElementById("lj_clock").textContent = lj_now_time();
+            // 每隔 1000 毫秒重复执行
+            lj_timer_2 = setInterval(function(){
+                lj_ticks++;
+                document.getElementById("lj_clock").textContent = lj_now_time();
+                document.getElementById("lj_clock_tick").textContent = "setInterval 已执行 " + lj_ticks + " 次";
+            }, 1000);
+            document.getElementById("lj_clock_box").className = "lj_result lj_on";
+        };
+        document.getElementById("lj_btn_clock_stop").onclick = function(){
+            clearInterval(lj_timer_2);
+            lj_timer_2 = null;
+            document.getElementById("lj_clock_box").className = "lj_result";
+            document.getElementById("lj_clock_tick").textContent = "时钟已停止（共执行 " + lj_ticks + " 次）";
+        };
+
+        // ========== 演示四：10 秒倒计时，数到 0 自动停止 ==========
+        var lj_timer_3 = null;
+        function lj_count_start(){
+            if(lj_timer_3 !== null){ return; }
+            var lj_left = 10;
+            var lj_num = document.getElementById("lj_count_num");
+            var lj_tip = document.getElementById("lj_count_tip");
+            var lj_bar = document.getElementById("lj_bar");
+            lj_num.textContent = lj_left;
+            lj_tip.textContent = "倒计时进行中…";
+            lj_bar.style.width = "100%";
+            // 先立即排一次版，再每秒更新
+            lj_bar.style.width = (lj_left * 10) + "%";
+            lj_timer_3 = setInterval(function(){
+                lj_left--;
+                lj_num.textContent = lj_left;
+                lj_bar.style.width = (lj_left * 10) + "%";
+                if(lj_left <= 0){
+                    clearInterval(lj_timer_3);   // 数到 0，自己停掉
+                    lj_timer_3 = null;
+                    lj_tip.textContent = "🎉 倒计时结束！setInterval 已自动清除";
+                }
+            }, 1000);
+        }
+        document.getElementById("lj_btn_count_start").onclick = lj_count_start;
+        document.getElementById("lj_btn_count_reset").onclick = function(){
+            clearInterval(lj_timer_3);
+            lj_timer_3 = null;
+            document.getElementById("lj_count_num").textContent = "10";
+            document.getElementById("lj_count_tip").textContent = "已重置，点击"开始倒计时"";
+            document.getElementById("lj_bar").style.width = "100%";
+        };
+    </script>
+</body>
+</html>
